@@ -7,6 +7,8 @@ class CustomTextField extends StatefulWidget {
   final String? labelText;
   final IconData? prefixIcon;
   final IconData? suffixIcon;
+  final double? borderRadius; 
+
   final bool readOnly;
   final bool enabled;
   final int maxLines;
@@ -20,6 +22,7 @@ class CustomTextField extends StatefulWidget {
   const CustomTextField({
     super.key,
     required this.theme,
+    this.borderRadius,
     this.hintText,
     this.labelText,
     this.prefixIcon,
@@ -64,16 +67,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     final theme = widget.theme;
+    final radius = widget.borderRadius ?? 8; 
 
     return TextField(
       controller: _controller,
       readOnly: widget.readOnly,
       enabled: widget.enabled,
-      cursorColor: theme.colors.textPrimary, // dấu nháy cùng màu text
+      cursorColor: theme.colors.textPrimary, 
       maxLines: widget.maxLines,
       minLines: widget.minLines,
       style: theme.text.body.copyWith(
-        color: widget.enabled ? theme.colors.textPrimary : theme.colors.textSecondary,
+        color: widget.enabled
+            ? theme.colors.textPrimary
+            : theme.colors.textSecondary,
       ),
       onChanged: widget.onChanged,
       onSubmitted: widget.onSubmitted,
@@ -91,23 +97,29 @@ class _CustomTextFieldState extends State<CustomTextField> {
         suffixIcon: (_showSuffix && widget.suffixIcon != null)
             ? GestureDetector(
                 onTap: widget.onSuffixTap ?? () => _controller.clear(),
-                child: Icon(widget.suffixIcon, color: theme.colors.textSecondary),
+                child: Icon(
+                  widget.suffixIcon,
+                  color: theme.colors.textSecondary,
+                ),
               )
             : null,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(radius),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(radius),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(radius),
           borderSide: BorderSide(color: theme.colors.accent, width: 1.5),
         ),
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 10,
+        ),
       ),
     );
   }
