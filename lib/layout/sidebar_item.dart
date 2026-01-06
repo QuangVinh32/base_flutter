@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_food_app/library/app_utils.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
 class SidebarItem extends StatelessWidget {
@@ -27,8 +28,10 @@ class SidebarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = hover
-        ? theme.colors.surface.withOpacity(0.6)
+final bgColor = active
+    ? theme.colors.surface
+    : hover
+        ? theme.colors.surface.withValues(alpha: 0.6)
         : Colors.transparent;
 
     final iconColor = active ? theme.colors.accent : theme.colors.textSecondary;
@@ -46,29 +49,24 @@ class SidebarItem extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 4),
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppUtils.radius),
           ),
           child: Row(
             children: [
-              // Indicator active bên trái
               Container(
                 width: 4,
                 height: double.infinity,
                 decoration: BoxDecoration(
                   color: active ? theme.colors.accent : Colors.transparent,
                   borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    bottomLeft: Radius.circular(8),
+                    topLeft: Radius.circular(AppUtils.radius),
+                    bottomLeft: Radius.circular(AppUtils.radius),
                   ),
                 ),
               ),
               const SizedBox(width: 8),
-
-              // Icon
               Icon(icon, size: 20, color: iconColor),
               const SizedBox(width: 12),
-
-              // Text
               Expanded(
                 child: Text(
                   text,

@@ -1,0 +1,28 @@
+import 'package:flutter/material.dart';
+import 'package:shop_food_app/theme/app_theme.dart';
+
+class NetworkPage extends StatelessWidget {
+  const NetworkPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = AppTheme.of(context);
+
+    return Container(
+      key: const ValueKey('network_page'),
+      padding: const EdgeInsets.all(24),
+      color: theme.colors.bgPrimary,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Network & internet', style: theme.text.h1),
+          const SizedBox(height: 16),
+          Text(
+            'Wi-Fi, Ethernet, VPN and network settings.',
+            style: theme.text.body,
+          ),
+        ],
+      ),
+    );
+  }
+}

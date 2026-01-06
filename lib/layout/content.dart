@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_food_app/library/app_utils.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
 class Content extends StatelessWidget {
@@ -7,7 +8,6 @@ class Content extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
-
     final items = [
       "Installed apps",
       "Advanced app settings",
@@ -19,18 +19,16 @@ class Content extends StatelessWidget {
       "Startup",
       "Resume",
     ];
-
     return ListView.builder(
       padding: const EdgeInsets.all(24),
       itemCount: items.length,
       itemBuilder: (context, index) {
         return Container(
-
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: theme.colors.surface, 
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppUtils.radius),
             border: Border.all(
               color: theme.colors.border, 
             ),

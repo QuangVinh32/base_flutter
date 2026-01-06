@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:shop_food_app/layout/content.dart';
 import 'package:shop_food_app/layout/header.dart';
 import 'package:shop_food_app/layout/Sidebar.dart';
+import 'package:shop_food_app/pages/accounts_page.dart';
+import 'package:shop_food_app/pages/apps_page.dart';
+import 'package:shop_food_app/pages/bluetooth_page.dart';
+import 'package:shop_food_app/pages/home_page.dart';
+import 'package:shop_food_app/pages/language_page.dart';
+import 'package:shop_food_app/pages/network_page.dart';
+import 'package:shop_food_app/pages/privacy_page.dart';
+import 'package:shop_food_app/pages/system_page.dart';
 import 'package:shop_food_app/theme/app_colors.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
 void main() {
-  runApp(AppTheme(colors: AppColors.dark, child: const MyApp()));
+  runApp(AppTheme(colors: AppColors.light, child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -31,11 +39,11 @@ class SettingsLayout extends StatefulWidget {
 
 class _SettingsLayoutState extends State<SettingsLayout> {
   bool isSidebarOpen = false;
+  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final isDesktop = constraints.maxWidth >= 1024;
@@ -46,7 +54,15 @@ class _SettingsLayoutState extends State<SettingsLayout> {
               Row(
                 children: [
                   if (isDesktop) ...[
-                    const Sidebar(),
+                    Sidebar(
+                      selectedIndex: selectedIndex,
+                      onSelect: (index) {
+                        setState(() {
+                          selectedIndex = index;
+                          isSidebarOpen = false;
+                        });
+                      },
+                    ),
                     Container(width: 1, color: theme.colors.border),
                   ],
                   Expanded(
@@ -58,7 +74,12 @@ class _SettingsLayoutState extends State<SettingsLayout> {
                             setState(() => isSidebarOpen = true);
                           },
                         ),
-                        const Expanded(child: Content()),
+                        Expanded(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 250),
+                            child: _buildContent(selectedIndex),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -100,3 +121,27 @@ class _SettingsLayoutState extends State<SettingsLayout> {
     );
   }
 }
+
+Widget _buildContent(int index) {
+  switch (index) {
+    case 0:
+      return const HomePage();
+    case 1:
+      return const SystemPage();
+    case 2:
+      return const BluetoothPage();
+    case 3:
+      return const NetworkPage();
+    case 4:
+      return const AppsPage();
+    case 5:
+      return const AccountsPage();
+    case 6:
+      return const LanguagePage();
+    case 7:
+      return const PrivacyPage();
+    default:
+      return const HomePage();
+  }
+}
+

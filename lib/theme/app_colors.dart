@@ -28,7 +28,7 @@ class AppColors {
     required this.error,
   });
 
-  /// 🌞 Light
+  /// Light
   static const light = AppColors(
     bgPrimary: Color(0xFFF5F5F5),
     bgSecondary: Color(0xFFFFFFFF),
@@ -39,12 +39,12 @@ class AppColors {
     textSecondary: Color(0xFF616161),
     textDisabled: Color(0xFF9E9E9E),
 
-    accent: Color.fromARGB(255, 53, 200, 58), // blue
-    accentHover: Color.fromARGB(255, 63, 216, 29),
+    accent: Color.fromARGB(255, 30, 177, 16), 
+    accentHover: Color.fromARGB(255, 30, 177, 16),
     error: Color(0xFFDC2626),
   );
 
-  /// 🌙 Dark (Windows 11 style)
+  /// Dark
   static const dark = AppColors(
     bgPrimary: Color(0xFF1E1E1E),
     bgSecondary: Color(0xFF202020),

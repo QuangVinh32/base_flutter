@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_food_app/library/app_utils.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
 class CustomIconButton extends StatelessWidget {
@@ -18,7 +19,7 @@ class CustomIconButton extends StatelessWidget {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: InkWell(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppUtils.radius),
         onTap: onTap,
         hoverColor: theme.colors.surface.withOpacity(0.6),
         child: Padding(

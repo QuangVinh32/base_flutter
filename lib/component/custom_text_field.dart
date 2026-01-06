@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_food_app/library/app_utils.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
 class CustomTextField extends StatefulWidget {
@@ -7,7 +8,9 @@ class CustomTextField extends StatefulWidget {
   final String? labelText;
   final IconData? prefixIcon;
   final IconData? suffixIcon;
-  final double? borderRadius; 
+  final double? borderRadius;
+  final Color? borderColor;
+  final Color? focusedBorderColor;
 
   final bool readOnly;
   final bool enabled;
@@ -36,6 +39,8 @@ class CustomTextField extends StatefulWidget {
     this.onSubmitted,
     this.onSuffixTap,
     this.errorText,
+    this.borderColor,
+    this.focusedBorderColor,
   });
 
   @override
@@ -67,13 +72,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     final theme = widget.theme;
-    final radius = widget.borderRadius ?? 8; 
+    // final radius = widget.borderRadius ?? 8;
+    
 
     return TextField(
       controller: _controller,
       readOnly: widget.readOnly,
       enabled: widget.enabled,
-      cursorColor: theme.colors.textPrimary, 
+      cursorColor: theme.colors.textPrimary,
       maxLines: widget.maxLines,
       minLines: widget.minLines,
       style: theme.text.body.copyWith(
@@ -104,17 +110,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
               )
             : null,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius),
+          borderRadius: BorderRadius.circular(AppUtils.radius),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(AppUtils.radius),
+          borderSide: BorderSide(color: theme.colors.border, width: 1),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius),
+          borderRadius: BorderRadius.circular(AppUtils.radius),
           borderSide: BorderSide(color: theme.colors.accent, width: 1.5),
         ),
+
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,

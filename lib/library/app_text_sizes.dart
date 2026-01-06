@@ -2,7 +2,6 @@
 class AppTextSizes {
   AppTextSizes._();
 
-  // Headings
   static const double h1 = 32;
   static const double h2 = 28;
   static const double h3 = 24;
@@ -10,7 +9,6 @@ class AppTextSizes {
   static const double h5 = 18;
   static const double h6 = 16;
 
-  // Body
   static const double bodyLarge = 16;
   static const double bodyMedium = 14;
   static const double bodySmall = 12;

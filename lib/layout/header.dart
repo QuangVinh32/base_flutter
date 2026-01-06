@@ -43,31 +43,26 @@ class _HeaderState extends State<Header> {
       ),
       child: Row(
         children: [
-          // Back button
-            CustomIconButton(
-              icon: Icons.arrow_back,
-              onTap: () => Navigator.of(context).maybePop(),
-            ),
+          CustomIconButton(
+            icon: Icons.arrow_back,
+            onTap: () => Navigator.of(context).maybePop(),
+          ),
 
-          // Menu button (responsive)
           if (!canBack && widget.showMenu)
-            CustomIconButton(
-              icon: Icons.menu,
-              onTap: widget.onMenuTap,
-            ),
+            CustomIconButton(icon: Icons.menu, onTap: widget.onMenuTap),
 
           const SizedBox(width: 8),
           const Spacer(),
 
-          // Search input
-          SizedBox(
-            width: 240,
+          Expanded(
             child: CustomTextField(
               theme: theme,
-              hintText: "Find a setting",
+              hintText: "Search",
               prefixIcon: Icons.search,
               suffixIcon: Icons.clear,
               controller: searchController,
+              borderColor: theme.colors.border,
+              focusedBorderColor: theme.colors.accent,
               onSuffixTap: () {
                 searchController.clear();
               },
