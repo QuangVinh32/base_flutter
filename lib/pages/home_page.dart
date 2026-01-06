@@ -7,8 +7,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
-
-    return Container(
+    return SizedBox.expand(child: Container(
       key: const ValueKey('home_page'),
       padding: const EdgeInsets.all(24),
       color: theme.colors.bgPrimary,
@@ -26,6 +25,6 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-    );
+    )); 
   }
 }

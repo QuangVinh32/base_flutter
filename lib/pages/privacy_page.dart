@@ -8,7 +8,7 @@ class PrivacyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
 
-    return Container(
+    return SizedBox.expand(child: Container(
       key: const ValueKey('privacy_page'),
       padding: const EdgeInsets.all(24),
       color: theme.colors.bgPrimary,
@@ -23,6 +23,6 @@ class PrivacyPage extends StatelessWidget {
           ),
         ],
       ),
-    );
+    )); 
   }
 }

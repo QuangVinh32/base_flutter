@@ -74,12 +74,7 @@ class _SettingsLayoutState extends State<SettingsLayout> {
                             setState(() => isSidebarOpen = true);
                           },
                         ),
-                        Expanded(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 250),
-                            child: _buildContent(selectedIndex),
-                          ),
-                        ),
+                        Expanded(child: _buildContent(selectedIndex)),
                       ],
                     ),
                   ),
@@ -110,7 +105,15 @@ class _SettingsLayoutState extends State<SettingsLayout> {
                     child: Material(
                       color: theme.colors.bgSecondary,
                       elevation: 16,
-                      child: const Sidebar(),
+                      child: Sidebar(
+                        selectedIndex: selectedIndex,
+                        onSelect: (index) {
+                          setState(() {
+                            selectedIndex = index;
+                            isSidebarOpen = false;
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ),
@@ -144,4 +147,3 @@ Widget _buildContent(int index) {
       return const HomePage();
   }
 }
-

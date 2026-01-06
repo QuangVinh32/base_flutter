@@ -8,10 +8,12 @@ class LanguagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
 
-    return Container(
+    return
+    SizedBox.expand(
+      child: Container(
       key: const ValueKey('language_page'),
       padding: const EdgeInsets.all(24),
-      color: theme.colors.bgPrimary,
+      color: theme.colors.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -23,6 +25,7 @@ class LanguagePage extends StatelessWidget {
           ),
         ],
       ),
+    )
     );
   }
 }

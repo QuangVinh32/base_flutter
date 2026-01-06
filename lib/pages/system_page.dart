@@ -8,7 +8,7 @@ class SystemPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
 
-    return Container(
+    return SizedBox.expand(child: Container(
       key: const ValueKey('system_page'),
       padding: const EdgeInsets.all(24),
       color: theme.colors.bgPrimary,
@@ -26,6 +26,6 @@ class SystemPage extends StatelessWidget {
           ),
         ],
       ),
-    );
+    )) ;
   }
 }
