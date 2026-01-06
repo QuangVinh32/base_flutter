@@ -54,7 +54,8 @@ class _HeaderState extends State<Header> {
           const SizedBox(width: 8),
           const Spacer(),
 
-          Expanded(
+          SizedBox(
+            width: 250,
             child: CustomTextField(
               theme: theme,
               hintText: "Search",
