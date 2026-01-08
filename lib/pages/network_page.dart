@@ -12,7 +12,7 @@ class NetworkPage extends StatelessWidget {
       child: Container(
         key: const ValueKey('network_page'),
         padding: const EdgeInsets.all(24),
-        color: theme.colors.bgPrimary,
+        color: theme.colors.bgSecondary,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

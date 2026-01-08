@@ -12,7 +12,7 @@ class AccountsPage extends StatelessWidget {
       child: Container(
         key: const ValueKey('accounts_page'),
         padding: const EdgeInsets.all(24),
-        color: theme.colors.bgPrimary,
+        color: theme.colors.bgSecondary,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

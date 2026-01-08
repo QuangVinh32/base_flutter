@@ -11,7 +11,7 @@ class CustomTextField extends StatefulWidget {
   final double? borderRadius;
   final Color? borderColor;
   final Color? focusedBorderColor;
-
+  final double? fontSize;
   final bool readOnly;
   final bool enabled;
   final int maxLines;
@@ -41,6 +41,7 @@ class CustomTextField extends StatefulWidget {
     this.errorText,
     this.borderColor,
     this.focusedBorderColor,
+    this.fontSize,
   });
 
   @override
@@ -73,7 +74,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Widget build(BuildContext context) {
     final theme = widget.theme;
     // final radius = widget.borderRadius ?? 8;
-    
 
     return TextField(
       controller: _controller,
@@ -83,6 +83,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
       maxLines: widget.maxLines,
       minLines: widget.minLines,
       style: theme.text.body.copyWith(
+        // Text size nhập
+        fontSize: widget.fontSize,
         color: widget.enabled
             ? theme.colors.textPrimary
             : theme.colors.textSecondary,
@@ -91,7 +93,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       onSubmitted: widget.onSubmitted,
       decoration: InputDecoration(
         hintText: widget.hintText,
-        hintStyle: theme.text.caption,
+        hintStyle: theme.text.caption.copyWith(fontSize: widget.fontSize),
         labelText: widget.labelText,
         labelStyle: theme.text.body.copyWith(color: theme.colors.textSecondary),
         errorText: widget.errorText,

@@ -11,7 +11,7 @@ class BluetoothPage extends StatelessWidget {
     return SizedBox.expand(child :Container(
       key: const ValueKey('bluetooth_page'),
       padding: const EdgeInsets.all(24),
-      color: theme.colors.bgPrimary,
+      color: theme.colors.bgSecondary,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

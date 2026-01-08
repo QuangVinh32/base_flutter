@@ -11,7 +11,7 @@ class SystemPage extends StatelessWidget {
     return SizedBox.expand(child: Container(
       key: const ValueKey('system_page'),
       padding: const EdgeInsets.all(24),
-      color: theme.colors.bgPrimary,
+      color: theme.colors.bgSecondary,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -28,7 +28,6 @@ class AppColors {
     required this.error,
   });
 
-  /// Light
   static const light = AppColors(
     bgPrimary: Color(0xFFF5F5F5),
     bgSecondary: Color(0xFFFFFFFF),
@@ -39,7 +38,7 @@ class AppColors {
     textSecondary: Color(0xFF616161),
     textDisabled: Color(0xFF9E9E9E),
 
-    accent: Color.fromARGB(255, 30, 177, 16), 
+    accent: Color.fromARGB(255, 30, 177, 16),
     accentHover: Color.fromARGB(255, 30, 177, 16),
     error: Color(0xFFDC2626),
   );
@@ -55,8 +54,23 @@ class AppColors {
     textSecondary: Color(0xFFB3B3B3),
     textDisabled: Color(0xFF6B6B6B),
 
-    accent: Color(0xFF3B82F6),
-    accentHover: Color.fromARGB(255, 235, 60, 197),
-    error: Color(0xFFF87171),
+    accent: Color.fromARGB(255, 34, 84, 164),
+    accentHover: Color.fromARGB(255, 34, 84, 164),
+    error: Color(0xFFDC2626),
+  );
+
+  static const tet = AppColors(
+    bgPrimary: Color(0xFFFFF5F5), // nền hồng nhạt
+    bgSecondary: Color(0xFFFFFFFF),
+    surface: Color(0xFFFFE4E6), // đỏ nhạt
+    border: Color(0xFFFECACA),
+
+    textPrimary: Color(0xFF7F1D1D), // đỏ sẫm
+    textSecondary: Color(0xFF991B1B),
+    textDisabled: Color(0xFFB91C1C),
+
+    accent: Color(0xFFD4AF37), // vàng kim
+    accentHover: Color(0xFFFFD700), // vàng tươi
+    error: Color(0xFFDC2626),
   );
 }

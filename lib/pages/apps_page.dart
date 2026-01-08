@@ -12,7 +12,7 @@ class AppsPage extends StatelessWidget {
       child: Container(
         key: const ValueKey('apps_page'),
         padding: const EdgeInsets.all(24),
-        color: theme.colors.bgPrimary,
+        color: theme.colors.bgSecondary,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

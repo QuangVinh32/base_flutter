@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_food_app/component/custom_icon_button.dart';
 import 'package:shop_food_app/component/custom_text_field.dart';
+import 'package:shop_food_app/library/app_text_sizes.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
 class Header extends StatefulWidget {
@@ -55,11 +56,12 @@ class _HeaderState extends State<Header> {
           const Spacer(),
 
           SizedBox(
-            width: 250,
+            width: 200,
             child: CustomTextField(
               theme: theme,
               hintText: "Search",
               prefixIcon: Icons.search,
+              fontSize: AppTextSizes.h6,
               suffixIcon: Icons.clear,
               controller: searchController,
               borderColor: theme.colors.border,

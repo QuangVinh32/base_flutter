@@ -13,7 +13,7 @@ class LanguagePage extends StatelessWidget {
       child: Container(
       key: const ValueKey('language_page'),
       padding: const EdgeInsets.all(24),
-      color: theme.colors.surface,
+      color: theme.colors.bgSecondary,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
