@@ -17,17 +17,7 @@ class VNeIDBottomBar extends StatelessWidget {
 
     return Container(
       height: 72,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            colors.textSecondary, 
-            colors.textPrimary,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-
-      ),
+      decoration: BoxDecoration(color: colors.bgSecondary),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -41,15 +31,9 @@ class VNeIDBottomBar extends StatelessWidget {
     );
   }
 
-  Widget _item(
-    BuildContext context,
-    int index,
-    IconData icon,
-    String label,
-  ) {
+  Widget _item(BuildContext context, int index, IconData icon, String label) {
     final colors = AppTheme.of(context).colors;
     final bool active = index == currentIndex;
-
     return InkWell(
       onTap: () => onTap(index),
       borderRadius: BorderRadius.circular(16),
@@ -62,17 +46,16 @@ class VNeIDBottomBar extends StatelessWidget {
               icon,
               size: 24,
               color: active
-                  ? colors.accent        // vàng kim (Tết)
-                  : colors.bgSecondary,  // trắng / xám
+                  ? colors
+                        .accent 
+                  : colors.textPrimary, 
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
                 fontSize: 11,
-                color: active
-                    ? colors.accent
-                    : colors.bgSecondary,
+                color: active ? colors.accent : colors.textPrimary,
                 fontWeight: active ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
@@ -95,15 +78,10 @@ class VNeIDBottomBar extends StatelessWidget {
           gradient: LinearGradient(
             colors: [
               colors.accentHover, // vàng sáng
-              colors.accent,      // vàng kim
+              colors.accent, // vàng kim
             ],
           ),
-          boxShadow: const [
-            BoxShadow(
-              blurRadius: 8,
-              color: Colors.black38,
-            ),
-          ],
+          boxShadow: const [BoxShadow(blurRadius: 8, color: Colors.black38)],
         ),
         child: Icon(
           Icons.qr_code_scanner,

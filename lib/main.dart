@@ -6,7 +6,7 @@ import 'package:shop_food_app/theme/app_theme.dart';
 
 
 void main() {
-  runApp(AppTheme(colors: AppColors.tet, child: const MyApp()));
+  runApp(AppTheme(colors: AppColors.light, child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

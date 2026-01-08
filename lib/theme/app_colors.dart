@@ -29,45 +29,50 @@ class AppColors {
   });
 
   static const light = AppColors(
-    bgPrimary: Color(0xFFF5F5F5),
+    // Backgrounds
+    bgPrimary: Color(0xFFF2F2F7), // iOS system background
     bgSecondary: Color(0xFFFFFFFF),
-    surface: Color(0xFFF0F0F0),
-    border: Color(0xFFE0E0E0),
+    surface: Color(0xFFF9F9FB),
+    border: Color(0xFFD1D1D6),
 
-    textPrimary: Color(0xFF1A1A1A),
-    textSecondary: Color(0xFF616161),
-    textDisabled: Color(0xFF9E9E9E),
+    // Text
+    textPrimary: Color(0xFF000000),
+    textSecondary: Color(0xFF3C3C43), // iOS secondary label
+    textDisabled: Color(0xFFAEAEB2),
 
-    accent: Color.fromARGB(255, 30, 177, 16),
-    accentHover: Color.fromARGB(255, 30, 177, 16),
-    error: Color(0xFFDC2626),
+    // Accent
+    accent: Color(0xFF007AFF), // iOS blue
+    accentHover: Color(0xFF005FCC),
+    error: Color(0xFFFF3B30), // iOS red
   );
 
-  /// Dark
   static const dark = AppColors(
-    bgPrimary: Color(0xFF1E1E1E),
-    bgSecondary: Color(0xFF202020),
-    surface: Color(0xFF2A2A2A),
-    border: Color(0xFF2F2F2F),
+    // Backgrounds
+    bgPrimary: Color(0xFF000000), // true black (OLED)
+    bgSecondary: Color(0xFF1C1C1E),
+    surface: Color(0xFF2C2C2E),
+    border: Color(0xFF38383A),
 
-    textPrimary: Color(0xFFEDEDED),
-    textSecondary: Color(0xFFB3B3B3),
-    textDisabled: Color(0xFF6B6B6B),
+    // Text
+    textPrimary: Color(0xFFFFFFFF),
+    textSecondary: Color(0xFFEBEBF5),
+    textDisabled: Color(0xFF8E8E93),
 
-    accent: Color.fromARGB(255, 34, 84, 164),
-    accentHover: Color.fromARGB(255, 34, 84, 164),
-    error: Color(0xFFDC2626),
+    // Accent
+    accent: Color(0xFF0A84FF), // iOS blue dark
+    accentHover: Color(0xFF409CFF),
+    error: Color(0xFFFF453A),
   );
 
   static const tet = AppColors(
     bgPrimary: Color(0xFFFFF5F5), // nền hồng nhạt
-    bgSecondary: Color(0xFFFFFFFF),
+    bgSecondary: Color(0xFF991B1B),
     surface: Color(0xFFFFE4E6), // đỏ nhạt
     border: Color(0xFFFECACA),
 
-    textPrimary: Color(0xFF7F1D1D), // đỏ sẫm
+    textPrimary: Color(0xFFFFFFFF), // đỏ sẫm
     textSecondary: Color(0xFF991B1B),
-    textDisabled: Color(0xFFB91C1C),
+    textDisabled: Color(0xFFFFF5F5),
 
     accent: Color(0xFFD4AF37), // vàng kim
     accentHover: Color(0xFFFFD700), // vàng tươi
