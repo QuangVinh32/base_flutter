@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_food_app/library/app_utils.dart';
 
 class CustomInputField extends StatefulWidget {
   final TextEditingController controller;
@@ -78,13 +79,13 @@ class _CustomInputFieldState extends State<CustomInputField> {
                   )
                 : null,
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(widget.borderRadius),
+              borderRadius: BorderRadius.circular(AppUtils.radius),
               borderSide: BorderSide(
                 color: hasError ? Colors.red.shade700 : Colors.grey.shade400,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(widget.borderRadius),
+              borderRadius: BorderRadius.circular(AppUtils.radius),
               borderSide: BorderSide(
                 color: hasError ? Colors.red.shade700 : widget.primaryColor,
                 width: 1.5,

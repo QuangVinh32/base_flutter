@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shop_food_app/api/product_api/product_api.dart';
 import 'package:shop_food_app/api/product_api/product_card.dart';
 import 'package:shop_food_app/api/product_api/product_models.dart';
+import 'package:shop_food_app/component/empty_result_view.dart';
 import 'package:shop_food_app/component/swiper_banner.dart';
 import 'package:shop_food_app/component/category_swiper.dart';
 import 'package:shop_food_app/component/custom_text_field.dart';
@@ -143,7 +144,7 @@ class _ProductListPageState extends State<ProductListPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: filteredProducts.isEmpty
-              ? _buildEmpty(theme)
+              ? const EmptyResultView()
               : Column(
                   children: filteredProducts
                       .map(

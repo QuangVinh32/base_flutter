@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_food_app/api/product_api/product_list_page.dart';
+import 'package:shop_food_app/auth/login_page.dart';
 import 'package:shop_food_app/pages_app/vneid_app_bar.dart';
 import 'package:shop_food_app/pages_app/vneid_bottom_bar.dart';
 
@@ -54,7 +55,7 @@ class _SettingLayoutAppState extends State<SettingLayoutApp> {
       case 3:
         return const Center(child: Text('Thông báo'));
       case 4:
-        return const Center(child: Text('Cá nhân'));
+        return const LoginPage1();
       default:
         return const SizedBox();
     }

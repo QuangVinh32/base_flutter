@@ -104,13 +104,20 @@ class _CustomTextFieldState extends State<CustomTextField> {
             : null,
         suffixIcon: (_showSuffix && widget.suffixIcon != null)
             ? GestureDetector(
-                onTap: widget.onSuffixTap ?? () => _controller.clear(),
+                onTap: () {
+                  _controller.clear();
+
+                  // QUAN TRỌNG: trigger lại onChanged
+                  widget.onChanged?.call('');
+                  widget.onSuffixTap?.call();
+                },
                 child: Icon(
                   widget.suffixIcon,
                   color: theme.colors.textSecondary,
                 ),
               )
             : null,
+
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppUtils.radius),
           borderSide: BorderSide.none,

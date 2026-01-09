@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 
 class AppUtils {
-  static const double radius = 10;
+  static const double radius = 4;
 
   static String formatVnd(num value) {
     return NumberFormat.currency(
