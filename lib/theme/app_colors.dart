@@ -59,8 +59,8 @@ class AppColors {
     textDisabled: Color(0xFF8E8E93),
 
     // Accent
-    accent: Color(0xFF0A84FF), // iOS blue dark
-    accentHover: Color(0xFF409CFF),
+    accent: Color.fromARGB(255, 21, 200, 102), // iOS blue dark
+    accentHover: Color.fromARGB(255, 21, 200, 102),
     error: Color(0xFFFF453A),
   );
 

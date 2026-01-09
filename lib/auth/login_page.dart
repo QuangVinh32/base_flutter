@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shop_food_app/component/custom_input_field.dart';
 import 'package:shop_food_app/component/show_snack_bar.dart';
-import 'package:shop_food_app/theme/app_colors.dart';
 import 'package:shop_food_app/library/app_utils.dart';
+import 'package:shop_food_app/theme/app_colors.dart';
+import 'package:shop_food_app/theme/app_theme.dart';
 
 class LoginPage1 extends StatefulWidget {
   const LoginPage1({super.key});
@@ -23,14 +24,6 @@ class _LoginPage1State extends State<LoginPage1> {
   bool _isLoading = false;
   bool _rememberMe = false;
 
-  late final AppColors colors;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    colors = AppColors.light; // sau này đổi dark / tet rất dễ
-  }
-
   @override
   void dispose() {
     _phoneController.dispose();
@@ -42,6 +35,8 @@ class _LoginPage1State extends State<LoginPage1> {
 
   @override
   Widget build(BuildContext context) {
+    final AppColors colors = AppTheme.of(context).colors;
+
     return Scaffold(
       backgroundColor: colors.bgPrimary,
       appBar: AppBar(
@@ -67,11 +62,11 @@ class _LoginPage1State extends State<LoginPage1> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildHeader(),
+                _buildHeader(colors),
                 const SizedBox(height: 20),
-                _buildFormContent(),
+                _buildFormContent(colors),
                 const SizedBox(height: 20),
-                _buildAuthSwitch(),
+                _buildAuthSwitch(colors),
               ],
             ),
           ),
@@ -81,7 +76,7 @@ class _LoginPage1State extends State<LoginPage1> {
   }
 
   // ================= HEADER =================
-  Widget _buildHeader() => Column(
+  Widget _buildHeader(AppColors colors) => Column(
         children: [
           Text(
             _isRegister ? 'Đăng ký' : 'Đăng nhập',
@@ -106,28 +101,29 @@ class _LoginPage1State extends State<LoginPage1> {
       );
 
   // ================= FORM =================
-  Widget _buildFormContent() => Column(
+  Widget _buildFormContent(AppColors colors) => Column(
         children: [
           AnimatedCrossFade(
             duration: const Duration(milliseconds: 250),
             crossFadeState: _isRegister
                 ? CrossFadeState.showSecond
                 : CrossFadeState.showFirst,
-            firstChild: _buildLoginForm(),
-            secondChild: _buildRegisterForm(),
+            firstChild: _buildLoginForm(colors),
+            secondChild: _buildRegisterForm(colors),
           ),
           const SizedBox(height: 16),
-          _buildAuthButton(),
+          _buildAuthButton(colors),
           if (!_isRegister) const SizedBox(height: 20),
-          if (!_isRegister) _buildSocialLoginSection(),
+          if (!_isRegister) _buildSocialLoginSection(colors),
         ],
       );
 
-  Widget _buildLoginForm() => Column(
+  Widget _buildLoginForm(AppColors colors) => Column(
         children: [
-          _buildPhoneField(),
+          _buildPhoneField(colors),
           const SizedBox(height: 16),
           _buildPasswordField(
+            colors: colors,
             controller: _passwordController,
             isVisible: _isPasswordVisible,
             onToggleVisibility: () =>
@@ -167,25 +163,26 @@ class _LoginPage1State extends State<LoginPage1> {
         ],
       );
 
-  Widget _buildRegisterForm() => Column(
+  Widget _buildRegisterForm(AppColors colors) => Column(
         children: [
-          _buildPhoneField(),
+          _buildPhoneField(colors),
           const SizedBox(height: 16),
-          _buildDocNoField(),
+          _buildDocNoField(colors),
           const SizedBox(height: 16),
           _buildPasswordField(
+            colors: colors,
             controller: _passwordController,
             isVisible: _isPasswordVisible,
             onToggleVisibility: () =>
                 setState(() => _isPasswordVisible = !_isPasswordVisible),
-            hintText: 'Mật khẩu',
           ),
           const SizedBox(height: 16),
           _buildPasswordField(
+            colors: colors,
             controller: _confirmPasswordController,
             isVisible: _isConfirmPasswordVisible,
-            onToggleVisibility: () => setState(
-                () => _isConfirmPasswordVisible =
+            onToggleVisibility: () =>
+                setState(() => _isConfirmPasswordVisible =
                     !_isConfirmPasswordVisible),
             hintText: 'Xác nhận mật khẩu',
             prefixIcon: Icons.verified,
@@ -194,7 +191,7 @@ class _LoginPage1State extends State<LoginPage1> {
       );
 
   // ================= INPUT =================
-  Widget _buildPhoneField() => CustomInputField(
+  Widget _buildPhoneField(AppColors colors) => CustomInputField(
         controller: _phoneController,
         hintText: "Số điện thoại hoặc CCCD",
         prefixIcon: Icons.person,
@@ -202,7 +199,7 @@ class _LoginPage1State extends State<LoginPage1> {
         keyboardType: TextInputType.number,
       );
 
-  Widget _buildDocNoField() => CustomInputField(
+  Widget _buildDocNoField(AppColors colors) => CustomInputField(
         controller: _docNoController,
         hintText: "Mã số hồ sơ",
         prefixIcon: Icons.description,
@@ -211,6 +208,7 @@ class _LoginPage1State extends State<LoginPage1> {
       );
 
   Widget _buildPasswordField({
+    required AppColors colors,
     required TextEditingController controller,
     required bool isVisible,
     required VoidCallback onToggleVisibility,
@@ -233,7 +231,7 @@ class _LoginPage1State extends State<LoginPage1> {
       );
 
   // ================= BUTTON =================
-  Widget _buildAuthButton() => SizedBox(
+  Widget _buildAuthButton(AppColors colors) => SizedBox(
         width: double.infinity,
         height: 48,
         child: ElevatedButton(
@@ -266,15 +264,16 @@ class _LoginPage1State extends State<LoginPage1> {
       );
 
   // ================= SOCIAL =================
-  Widget _buildSocialLoginSection() => Column(
+  Widget _buildSocialLoginSection(AppColors colors) => Column(
         children: [
           const SizedBox(height: 12),
-          _buildDividerWithText('Hoặc đăng nhập với'),
+          _buildDividerWithText(colors, 'Hoặc đăng nhập với'),
           const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
                 child: _buildSocialButton(
+                  colors,
                   Icons.g_mobiledata_outlined,
                   Colors.red,
                   _loginWithGoogle,
@@ -283,14 +282,16 @@ class _LoginPage1State extends State<LoginPage1> {
               const SizedBox(width: 12),
               Expanded(
                 child: _buildSocialButton(
+                  colors,
                   Icons.facebook,
-                  Colors.blue.shade700,
+                  Colors.blue,
                   _loginWithFacebook,
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildSocialButton(
+                  colors,
                   Icons.apple,
                   colors.textPrimary,
                   _loginWithApple,
@@ -302,8 +303,9 @@ class _LoginPage1State extends State<LoginPage1> {
       );
 
   Widget _buildSocialButton(
+    AppColors colors,
     IconData icon,
-    Color color,
+    Color iconColor,
     VoidCallback onPressed,
   ) =>
       OutlinedButton(
@@ -316,10 +318,10 @@ class _LoginPage1State extends State<LoginPage1> {
           ),
           minimumSize: const Size(0, 48),
         ),
-        child: Icon(icon, size: 26, color: color),
+        child: Icon(icon, size: 26, color: iconColor),
       );
 
-  Widget _buildDividerWithText(String text) => Row(
+  Widget _buildDividerWithText(AppColors colors, String text) => Row(
         children: [
           Expanded(child: Divider(color: colors.border)),
           Padding(
@@ -337,7 +339,7 @@ class _LoginPage1State extends State<LoginPage1> {
       );
 
   // ================= SWITCH =================
-  Widget _buildAuthSwitch() => Row(
+  Widget _buildAuthSwitch(AppColors colors) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
