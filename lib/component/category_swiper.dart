@@ -17,17 +17,14 @@ class CategorySwiper extends StatefulWidget {
 }
 
 class _CategorySwiperState extends State<CategorySwiper> {
-  String? selected; // null = Tất cả
+  String? selected; 
 
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
-
-    // +1 cho item "Tất cả"
     final itemCount = widget.categories.length + 1;
-
     return SizedBox(
-      height: 32,
+      height: 28,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
@@ -61,15 +58,15 @@ class _CategorySwiperState extends State<CategorySwiper> {
                       ? theme.colors.accent
                       : theme.colors.border,
                 ),
-                boxShadow: active
-                    ? [
-                        BoxShadow(
-                          color: theme.colors.accent.withOpacity(0.25),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ]
-                    : [],
+                // boxShadow: active
+                //     ? [
+                //         BoxShadow(
+                //           color: theme.colors.accent.withValues(alpha: 0.25),
+                //           blurRadius: 8,
+                //           offset: const Offset(0, 4),
+                //         ),
+                //       ]
+                //     : [],
               ),
               alignment: Alignment.center,
               child: Text(

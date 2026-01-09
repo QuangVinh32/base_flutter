@@ -4,7 +4,9 @@ import 'package:shop_food_app/api/api_client.dart';
 import 'product_models.dart';
 
 class ProductApi {
-  /// GET /api/products/get-all
+  // =========================
+  // GET ALL (ADMIN)
+  // =========================
   static Future<PageResponse<ProductForAdmin>> getAllProducts({
     int page = 0,
     int size = 10,
@@ -19,26 +21,45 @@ class ProductApi {
       },
     );
 
-    final jsonData = jsonDecode(res.body);
+    if (res.statusCode != 200) {
+      throw Exception('Get products failed: ${res.statusCode}');
+    }
+
     return PageResponse.fromJson(
-      jsonData,
+      jsonDecode(res.body),
       (e) => ProductForAdmin.fromJson(e),
     );
   }
 
-  /// GET /api/products/admin/{id}
+  // =========================
+  // GET BY ID (ADMIN)
+  // =========================
   static Future<ProductForAdmin> getProductForAdmin(int id) async {
     final res = await ApiClient.get('/products/admin/$id');
+
+    if (res.statusCode != 200) {
+      throw Exception('Get product failed: ${res.statusCode}');
+    }
+
     return ProductForAdmin.fromJson(jsonDecode(res.body));
   }
 
-  /// GET /api/products/user/{id}
+  // =========================
+  // GET BY ID (USER)
+  // =========================
   static Future<ProductForUser> getProductForUser(int id) async {
     final res = await ApiClient.get('/products/user/$id');
+
+    if (res.statusCode != 200) {
+      throw Exception('Get product failed: ${res.statusCode}');
+    }
+
     return ProductForUser.fromJson(jsonDecode(res.body));
   }
 
-  /// POST /api/products
+  // =========================
+  // CREATE PRODUCT (MULTIPART)
+  // =========================
   static Future<void> createProduct({
     required Map<String, String> fields,
     required List<http.MultipartFile> images,
@@ -50,12 +71,16 @@ class ProductApi {
       images,
     );
 
+    final body = await res.stream.bytesToString();
+
     if (res.statusCode != 201) {
-      throw Exception('Create product failed');
+      throw Exception('Create product failed: $body');
     }
   }
 
-  /// PUT /api/products/{id}
+  // =========================
+  // UPDATE PRODUCT (MULTIPART)
+  // =========================
   static Future<void> updateProduct({
     required int id,
     required Map<String, String> fields,
@@ -68,16 +93,21 @@ class ProductApi {
       images,
     );
 
+    final body = await res.stream.bytesToString();
+
     if (res.statusCode != 200) {
-      throw Exception('Update product failed');
+      throw Exception('Update product failed: $body');
     }
   }
 
-  /// DELETE /api/products/{id}
+  // =========================
+  // DELETE PRODUCT
+  // =========================
   static Future<void> deleteProduct(int id) async {
     final res = await ApiClient.delete('/products/$id');
+
     if (res.statusCode != 200) {
-      throw Exception('Delete product failed');
+      throw Exception('Delete product failed: ${res.body}');
     }
   }
 }

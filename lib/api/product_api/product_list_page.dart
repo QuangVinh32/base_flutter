@@ -15,51 +15,66 @@ class ProductListPage extends StatefulWidget {
 }
 
 class _ProductListPageState extends State<ProductListPage> {
-  late Future<PageResponse<ProductForAdmin>> _future;
-  final TextEditingController _searchController = TextEditingController();
+  late Future<PageResponse<ProductForAdmin>> future;
+  final TextEditingController searchController = TextEditingController();
+  List<ProductForAdmin> allProducts = [];
+  List<ProductForAdmin> filteredProducts = [];
+  List<String> categories = [];
+  String? electedCategory;
+  bool initialized = false;
 
-  List<ProductForAdmin> _allProducts = [];
-  List<ProductForAdmin> _filteredProducts = [];
-  List<String> _categories = [];
-
-  String? _selectedCategory;
-
+  // =========================
+  // INIT
+  // =========================
   @override
   void initState() {
     super.initState();
-    _future = ProductApi.getAllProducts();
+    future = ProductApi.getAllProducts();
   }
 
-  // 🔍 FILTER CHUNG (SEARCH + CATEGORY)
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
+
+  // =========================
+  // INIT DATA SAU KHI LOAD API
+  // =========================
+  void _initData(List<ProductForAdmin> products) {
+    allProducts = products;
+    filteredProducts = products;
+
+    categories = products
+        .map((e) => e.categoryStatus)
+        .whereType<String>()
+        .toSet()
+        .toList();
+    initialized = true;
+  }
+
+  // =========================
+  // FILTER (SEARCH + CATEGORY)
+  // =========================
   void _applyFilter({String? keyword, String? category}) {
-    final q = (keyword ?? _searchController.text).trim().toLowerCase();
+    final q = (keyword ?? searchController.text).trim().toLowerCase();
 
     setState(() {
-      // category null = TẤT CẢ
-      _selectedCategory = category;
-
-      _filteredProducts = _allProducts.where((p) {
-        final matchSearch =
-            q.isEmpty ||
-            p.productName.toLowerCase().contains(q) ||
-            p.description.toLowerCase().contains(q);
-
+      electedCategory = category;
+      filteredProducts = allProducts.where((p) {
+        final name = p.productName.toLowerCase();
+        final desc = (p.description).toLowerCase();
+        final matchSearch = q.isEmpty || name.contains(q) || desc.contains(q);
         final matchCategory =
-            _selectedCategory == null || p.categoryStatus == _selectedCategory;
-
+            electedCategory == null || p.categoryStatus == electedCategory;
         return matchSearch && matchCategory;
       }).toList();
     });
   }
 
-  void _buildCategories() {
-    _categories = _allProducts
-        .map((e) => e.categoryStatus)
-        .whereType<String>()
-        .toSet()
-        .toList();
-  }
-
+  // =========================
+  // UI
+  // =========================
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
@@ -76,7 +91,7 @@ class _ProductListPageState extends State<ProductListPage> {
         ),
       ),
       body: FutureBuilder<PageResponse<ProductForAdmin>>(
-        future: _future,
+        future: future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -85,79 +100,73 @@ class _ProductListPageState extends State<ProductListPage> {
           if (snapshot.hasError) {
             return Center(child: Text('Lỗi: ${snapshot.error}'));
           }
-
           final page = snapshot.data!;
-          _allProducts = page.content;
-
-          if (_filteredProducts.isEmpty) {
-            _filteredProducts = _allProducts;
-            _buildCategories();
+          if (!initialized) {
+            _initData(page.content);
           }
+          return _buildBody(theme);
+        },
+      ),
+    );
+  }
 
-          return ListView(
-            padding: const EdgeInsets.only(bottom: 16),
-            children: [
-              // 🔍 SEARCH
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                child: CustomTextField(
-                  theme: theme,
-                  controller: _searchController,
-                  hintText: 'Tìm kiếm sản phẩm',
-                  prefixIcon: Icons.search,
-                  suffixIcon: Icons.close,
-                  onChanged: (v) => _applyFilter(keyword: v),
-                ),
-              ),
+  Widget _buildBody(AppTheme theme) {
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+          child: CustomTextField(
+            theme: theme,
+            controller: searchController,
+            hintText: 'Tìm kiếm sản phẩm',
+            prefixIcon: Icons.search,
+            suffixIcon: Icons.close,
+            onChanged: (v) => _applyFilter(keyword: v),
+          ),
+        ),
 
-              const SwiperBanner(
-                images: [
-                  'https://picsum.photos/800/400?1',
-                  'https://picsum.photos/800/400?2',
-                  'https://picsum.photos/800/400?3',
-                ],
-              ),
+        const SwiperBanner(
+          images: [
+            // 'assets/images/hue.jpg',
+            'assets/images/hue12.jpg',
+            // 'assets/images/hue123.jpg',
+          ],
+        ),
+        const SizedBox(height: 5),
+        if (categories.isNotEmpty)
+          CategorySwiper(
+            categories: categories,
+            onSelected: (c) => _applyFilter(category: c == 'Tất cả' ? null : c),
+          ),
 
-              const SizedBox(height: 12),
-
-              // 🏷️ CATEGORY SWIPER
-              if (_categories.isNotEmpty)
-                CategorySwiper(
-                  categories: _categories,
-                  onSelected: (c) => _applyFilter(category: c),
-                ),
-
-              const SizedBox(height: 16),
-
-              // 📦 PRODUCT LIST
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _filteredProducts.isEmpty
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 40),
-                        child: Center(
-                          child: Text(
-                            'Không có sản phẩm',
-                            style: theme.text.caption.copyWith(
-                              color: theme.colors.textSecondary,
-                            ),
-                          ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: filteredProducts.isEmpty
+              ? _buildEmpty(theme)
+              : Column(
+                  children: filteredProducts
+                      .map(
+                        (p) => Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: ProductCard(theme: theme, product: p),
                         ),
                       )
-                    : Column(
-                        children: _filteredProducts
-                            .map(
-                              (p) => Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
-                                child: ProductCard(theme: theme, product: p),
-                              ),
-                            )
-                            .toList(),
-                      ),
-              ),
-            ],
-          );
-        },
+                      .toList(),
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmpty(AppTheme theme) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 40),
+      child: Center(
+        child: Text(
+          'Không có sản phẩm',
+          style: theme.text.caption.copyWith(color: theme.colors.textSecondary),
+        ),
       ),
     );
   }

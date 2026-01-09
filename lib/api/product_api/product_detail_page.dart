@@ -3,13 +3,28 @@ import 'package:shop_food_app/api/product_api/product_models.dart';
 import 'package:shop_food_app/library/app_utils.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
-class ProductDetailPage extends StatelessWidget {
+class ProductDetailPage extends StatefulWidget {
   final ProductForAdmin product;
 
   const ProductDetailPage({
     super.key,
     required this.product,
   });
+
+  @override
+  State<ProductDetailPage> createState() => _ProductDetailPageState();
+}
+
+class _ProductDetailPageState extends State<ProductDetailPage> {
+  ProductSizeDTO? _selectedSize;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.product.sizes.isNotEmpty) {
+      _selectedSize = widget.product.sizes.first;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +37,7 @@ class ProductDetailPage extends StatelessWidget {
         foregroundColor: theme.colors.textPrimary,
         elevation: 0,
         title: Text(
-          product.productName,
+          widget.product.productName,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
@@ -38,7 +53,9 @@ class ProductDetailPage extends StatelessWidget {
                 children: [
                   _buildHeader(theme),
                   const SizedBox(height: 16),
-                  _buildSizes(theme),
+                  _buildSizeOptions(theme),
+                  const SizedBox(height: 20),
+                  _buildPrice(theme),
                   const SizedBox(height: 20),
                   _buildDescription(theme),
                 ],
@@ -50,9 +67,9 @@ class ProductDetailPage extends StatelessWidget {
     );
   }
 
-  // 🖼️ SLIDER ẢNH
+  // ================= IMAGE =================
   Widget _buildImageSlider(AppTheme theme) {
-    if (product.productImages.isEmpty) {
+    if (widget.product.productImages.isEmpty) {
       return Container(
         height: 220,
         color: theme.colors.surface,
@@ -63,107 +80,140 @@ class ProductDetailPage extends StatelessWidget {
     return SizedBox(
       height: 220,
       child: PageView.builder(
-        itemCount: product.productImages.length,
-        itemBuilder: (_, index) {
-          return Image.network(
-            product.productImages[index],
-            fit: BoxFit.cover,
-            width: double.infinity,
-          );
-        },
+        itemCount: widget.product.productImages.length,
+        itemBuilder: (_, i) => Image.network(
+          widget.product.productImages[i],
+          fit: BoxFit.cover,
+          width: double.infinity,
+        ),
       ),
     );
   }
 
-  // 🧾 TÊN + LOẠI
+  // ================= HEADER =================
   Widget _buildHeader(AppTheme theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          product.productName,
-        ),
+        Text(widget.product.productName, style: theme.text.h1),
         const SizedBox(height: 6),
-        _chip(
-          product.categoryStatus ?? 'Chưa phân loại',
-          theme,
-        ),
+        _chip(widget.product.categoryStatus ?? 'Chưa phân loại', theme),
       ],
     );
   }
 
-  Widget _buildSizes(AppTheme theme) {
-    if (product.sizes.isEmpty) {
-      return Text(
-        'Chưa có size',
-        style: theme.text.caption,
-      );
+  // ================= SIZE OPTIONS =================
+  Widget _buildSizeOptions(AppTheme theme) {
+    final sizes = widget.product.sizes;
+
+    if (sizes.isEmpty) {
+      return Text('Chưa có size', style: theme.text.caption);
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Các loại',
+          'Chọn size',
           style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 8),
-        ...product.sizes.map(
-          (s) => Container(
-            margin: const EdgeInsets.only(bottom: 8),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: theme.colors.surface,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: theme.colors.border),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: sizes.map((s) {
+            final selected = identical(_selectedSize, s);
+
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedSize = s;
+                });
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: selected
+                      ? theme.colors.textPrimary
+                      : theme.colors.surface,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: selected
+                        ? theme.colors.textPrimary
+                        : theme.colors.border,
+                  ),
+                ),
+                child: Text(
                   s.sizeName,
-                  style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
+                  style: theme.text.body.copyWith(
+                    color: selected
+                        ? Colors.white
+                        : theme.colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      AppUtils.formatVnd(s.price),
-                      style: theme.text.body.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (s.discount > 0)
-                      Text(
-                        'Giảm ${s.discount}%',
-                        style: theme.text.caption.copyWith(
-                          color: theme.colors.error,
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+              ),
+            );
+          }).toList(),
         ),
       ],
     );
   }
 
-  Widget _buildDescription(AppTheme theme) {
+  // ================= PRICE =================
+  Widget _buildPrice(AppTheme theme) {
+    if (_selectedSize == null) return const SizedBox();
+
+    final s = _selectedSize!;
+    final double finalPrice =
+        s.discount > 0 ? s.price * (100 - s.discount) / 100 : s.price;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Mô tả',
-          style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
+          AppUtils.formatVnd(finalPrice),
+          style: theme.text.h1.copyWith(
+            color: theme.colors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
+        if (s.discount > 0)
+          Row(
+            children: [
+              Text(
+                AppUtils.formatVnd(s.price),
+                style: theme.text.caption.copyWith(
+                  decoration: TextDecoration.lineThrough,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '-${s.discount}%',
+                style: theme.text.caption.copyWith(
+                  color: theme.colors.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+      ],
+    );
+  }
+
+  // ================= DESCRIPTION =================
+  Widget _buildDescription(AppTheme theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Mô tả',
+            style: theme.text.body.copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         Text(
-          product.description,
-          style: theme.text.body.copyWith(
-            color: theme.colors.textSecondary,
-          ),
+          widget.product.description,
+          style:
+              theme.text.body.copyWith(color: theme.colors.textSecondary),
         ),
       ],
     );

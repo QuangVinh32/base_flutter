@@ -22,7 +22,7 @@ class VNeIDBottomBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _item(context, 0, Icons.home_outlined, 'Trang chủ'),
-          _item(context, 1, Icons.folder_outlined, 'Dịch vụ'),
+          _item(context, 1, Icons.folder_outlined, 'Đơn hàng'),
           _centerItem(context),
           _item(context, 3, Icons.notifications_outlined, 'Thông báo'),
           _item(context, 4, Icons.person_outline, 'Cá nhân'),
