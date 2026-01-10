@@ -130,10 +130,10 @@ class _ProductListPageState extends State<ProductListPage> {
           images: [
             // 'assets/images/hue.jpg',
             'assets/images/hue12.jpg',
-            // 'assets/images/hue123.jpg',
+            'assets/images/hue123.jpg',
           ],
         ),
-        const SizedBox(height: 5),
+        const SizedBox(height: 6),
         if (categories.isNotEmpty)
           CategorySwiper(
             categories: categories,

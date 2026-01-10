@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shop_food_app/api/product_api/product_api.dart';
 import 'package:shop_food_app/api/product_api/product_models.dart';
+import 'package:shop_food_app/component/swiper_banner.dart';
 import 'package:shop_food_app/library/app_utils.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final int productId;
-
   const ProductDetailPage({super.key, required this.productId});
 
   @override
@@ -24,41 +24,29 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     _loadProduct();
   }
 
-Future<void> _loadProduct() async {
-  try {
-    final res = await ProductApi.getProductForUser(widget.productId);
+  Future<void> _loadProduct() async {
+    try {
+      final res = await ProductApi.getProductForUser(widget.productId);
+      if (!mounted) return;
 
-    if (!mounted) return;
-
-    setState(() {
-      _product = res;
-      _selectedSize = res.sizes.isNotEmpty ? res.sizes.first : null;
-      _loading = false;
-    });
-  } catch (e, s) {
-    debugPrint('LOAD PRODUCT ERROR: $e');
-    debugPrintStack(stackTrace: s);
-
-    if (mounted) {
-      setState(() => _loading = false);
+      setState(() {
+        _product = res;
+        _selectedSize = res.sizes.isNotEmpty ? res.sizes.first : null;
+        _loading = false;
+      });
+    } catch (e, s) {
+      debugPrint('LOAD PRODUCT ERROR: $e');
+      debugPrintStack(stackTrace: s);
+      if (mounted) setState(() => _loading = false);
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
 
-    if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
-    if (_product == null) {
-      return const Scaffold(
-        body: Center(child: Text('Không tìm thấy sản phẩm')),
-      );
-    }
+    if (_loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_product == null) return const Scaffold(body: Center(child: Text('Không tìm thấy sản phẩm')));
 
     final product = _product!;
 
@@ -74,20 +62,34 @@ Future<void> _loadProduct() async {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildImages(product, theme),
+            const SizedBox(height: 16),
+            // ================= CAROUSEL =================
+            SwiperBanner(
+              images: product.productImages,
+              height: 240,
+              paddingHorizontal: 16,
+              borderRadius: BorderRadius.circular(AppUtils.radius),
+              autoPlayInterval: const Duration(seconds: 8),
+            ),
+
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ================= HEADER =================
                   _buildHeader(product, theme),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
+                  // ================= SIZE OPTIONS =================
                   _buildSizeOptions(product, theme),
                   const SizedBox(height: 20),
+                  // ================= PRICE =================
                   _buildPrice(theme),
                   const SizedBox(height: 20),
+                  // ================= DESCRIPTION =================
                   _buildDescription(product, theme),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
+                  // ================= REVIEWS =================
                   _buildReviews(product, theme),
                 ],
               ),
@@ -98,133 +100,56 @@ Future<void> _loadProduct() async {
     );
   }
 
-  Widget _buildReviews(ProductForUser product, AppTheme theme) {
-    if (product.reviews.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.only(top: 16),
-        child: Text('Chưa có đánh giá', style: theme.text.caption),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 24),
-        Text(
-          'Đánh giá',
-          style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 12),
-        ...product.reviews.map((r) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: theme.colors.surface,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  r.user?.fullName ?? 'Người dùng',
-                  style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: List.generate(
-                    5,
-                    (i) => Icon(
-                      i < r.rating ? Icons.star : Icons.star_border,
-                      size: 16,
-                      color: Colors.amber,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(r.reviewText, style: theme.text.body),
-              ],
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  // ================= IMAGE =================
-  Widget _buildImages(ProductForUser product, AppTheme theme) {
-    if (product.productImages.isEmpty) {
-      return Container(
-        height: 220,
-        color: theme.colors.surface,
-        child: const Center(child: Icon(Icons.fastfood, size: 64)),
-      );
-    }
-
-    return SizedBox(
-      height: 220,
-      child: PageView.builder(
-        itemCount: product.productImages.length,
-        itemBuilder: (_, i) => Image.network(
-          product.productImages[i],
-          fit: BoxFit.cover,
-          width: double.infinity,
-        ),
-      ),
-    );
-  }
-
   // ================= HEADER =================
   Widget _buildHeader(ProductForUser product, AppTheme theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(product.productName, style: theme.text.h1),
+        Text(product.productName, style: theme.text.h1.copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 6),
-        _chip(
-          product.categoryStatus ?? 'Chưa phân loại',
-          theme,
-        ),
+        _chip(product.categoryStatus ?? 'Chưa phân loại', theme),
       ],
     );
   }
 
-  // ================= SIZE =================
+  Widget _chip(String text, AppTheme theme) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: theme.colors.textDisabled,
+        borderRadius: BorderRadius.circular(AppUtils.radius),
+      ),
+      child: Text(text, style: theme.text.caption.copyWith(color: theme.colors.textSecondary)),
+    );
+  }
+
+  // ================= SIZE OPTIONS =================
   Widget _buildSizeOptions(ProductForUser product, AppTheme theme) {
-    if (product.sizes.isEmpty) {
-      return Text('Chưa có size', style: theme.text.caption);
-    }
+    if (product.sizes.isEmpty) return Text('Chưa có size', style: theme.text.caption);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Chọn size',
-          style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
-        ),
+        Text('Chọn size', style: theme.text.body.copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         Wrap(
-          spacing: 8,
+          spacing: 12,
           children: product.sizes.map((s) {
             final selected = identical(_selectedSize, s);
-
             return GestureDetector(
               onTap: () => setState(() => _selectedSize = s),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: selected
-                      ? theme.colors.textPrimary
-                      : theme.colors.surface,
-                  borderRadius: BorderRadius.circular(8),
+                  color: selected ? theme.colors.accent : theme.colors.surface,
+                  borderRadius: BorderRadius.circular(AppUtils.radius),
                   border: Border.all(
-                    color: selected
-                        ? theme.colors.textPrimary
-                        : theme.colors.border,
+                    color: selected ? theme.colors.accent : theme.colors.border,
                   ),
+                  boxShadow: selected
+                      ? [const BoxShadow(color: Colors.black12, blurRadius: AppUtils.radius, offset: Offset(0, 2))]
+                      : null,
                 ),
                 child: Text(
                   s.sizeName,
@@ -244,26 +169,21 @@ Future<void> _loadProduct() async {
   // ================= PRICE =================
   Widget _buildPrice(AppTheme theme) {
     if (_selectedSize == null) return const SizedBox();
-
     final s = _selectedSize!;
-    final double finalPrice = s.discount > 0
-        ? s.price * (100 - s.discount) / 100
-        : s.price;
+    final double finalPrice = s.discount > 0 ? s.price * (100 - s.discount) / 100 : s.price;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(
-          AppUtils.formatVnd(finalPrice),
-          style: theme.text.h1.copyWith(fontWeight: FontWeight.w700),
-        ),
+        Text(AppUtils.formatVnd(finalPrice),
+            style: theme.text.h1.copyWith(fontWeight: FontWeight.bold, color: theme.colors.accent)),
+        const SizedBox(width: 12),
         if (s.discount > 0)
-          Text(
-            AppUtils.formatVnd(s.price),
-            style: theme.text.caption.copyWith(
-              decoration: TextDecoration.lineThrough,
-            ),
-          ),
+          Text(AppUtils.formatVnd(s.price),
+              style: theme.text.caption.copyWith(
+                decoration: TextDecoration.lineThrough,
+                color: theme.colors.textSecondary,
+              )),
       ],
     );
   }
@@ -273,27 +193,54 @@ Future<void> _loadProduct() async {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Mô tả',
-          style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
-        ),
+        Text('Mô tả', style: theme.text.body.copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
-        Text(
-          product.description,
-          style: theme.text.body.copyWith(color: theme.colors.textSecondary),
-        ),
+        Text(product.description, style: theme.text.body.copyWith(color: theme.colors.textSecondary)),
       ],
     );
   }
 
-  Widget _chip(String text, AppTheme theme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: theme.colors.surface,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(text, style: theme.text.caption),
+  // ================= REVIEWS =================
+  Widget _buildReviews(ProductForUser product, AppTheme theme) {
+    if (product.reviews.isEmpty) return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Text('Chưa có đánh giá', style: theme.text.caption),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Đánh giá', style: theme.text.body.copyWith(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 12),
+        ...product.reviews.map((r) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: theme.colors.surface,
+              borderRadius: BorderRadius.circular(AppUtils.radius),
+              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0,2))],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(r.user?.fullName ?? 'Người dùng',
+                    style: theme.text.body.copyWith(fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Row(
+                  children: List.generate(5, (i) => Icon(
+                    i < r.rating ? Icons.star : Icons.star_border,
+                    size: 16,
+                    color: Colors.amber,
+                  )),
+                ),
+                const SizedBox(height: 6),
+                Text(r.reviewText, style: theme.text.body.copyWith(color: theme.colors.textSecondary)),
+              ],
+            ),
+          );
+        }),
+      ],
     );
   }
 }
