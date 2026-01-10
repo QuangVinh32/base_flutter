@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_food_app/layout/sidebar_item.dart';
-import 'package:shop_food_app/pages/user_info_page.dart';
+import 'package:shop_food_app/pages/user_info.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
 class Sidebar extends StatefulWidget {
@@ -74,7 +74,7 @@ return Container(
 
       const Spacer(),
       // ===== USER INFO =====
-      UserInfo(theme: theme),
+      // UserInfo(theme: theme),
     ],
   ),
 );

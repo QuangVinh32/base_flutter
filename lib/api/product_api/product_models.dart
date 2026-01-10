@@ -13,13 +13,42 @@ class ProductSizeDTO {
 
   factory ProductSizeDTO.fromJson(Map<String, dynamic> json) {
     return ProductSizeDTO(
-      sizeName: json['sizeName'],
-      price: (json['price'] as num).toDouble(),
-      discount: json['discount'],
-      quantity: json['quantity'],
+      sizeName: json['sizeName'] ?? '',
+      price: (json['price'] ?? 0).toDouble(),
+      discount: json['discount'] ?? 0,
+      quantity: json['quantity'] ?? 0,
     );
   }
 }
+
+class ReviewDTO {
+  final int rating;
+  final String reviewText;
+  final DateTime createdAt;
+  final UserDTO? user;
+
+  ReviewDTO({
+    required this.rating,
+    required this.reviewText,
+    required this.createdAt,
+    this.user,
+  });
+
+  factory ReviewDTO.fromJson(Map<String, dynamic> json) {
+    return ReviewDTO(
+      rating: json['rating'] ?? 0,
+      reviewText: json['reviewText'] ?? '',
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+      user: json['userDTO'] != null
+          ? UserDTO.fromJson(json['userDTO'])
+          : null,
+    );
+  }
+}
+
+
 
 class ProductForAdmin {
   final int productId;
@@ -54,32 +83,68 @@ class ProductForAdmin {
 
 
 class ProductForUser {
-  final int productId;
   final String productName;
   final String description;
-  final List<String> images;
+  final List<String> productImages;
   final List<ProductSizeDTO> sizes;
+  final List<ReviewDTO> reviews;
+
+  final int? categoryId;
+  final String? categoryImage;
+  final String? categoryStatus;
 
   ProductForUser({
-    required this.productId,
     required this.productName,
     required this.description,
-    required this.images,
+    required this.productImages,
     required this.sizes,
+    required this.reviews,
+    this.categoryId,
+    this.categoryImage,
+    this.categoryStatus,
   });
 
   factory ProductForUser.fromJson(Map<String, dynamic> json) {
     return ProductForUser(
-      productId: json['productId'],
-      productName: json['productName'],
-      description: json['description'],
-      images: List<String>.from(json['productImages'] ?? []),
+      productName: json['productName'] ?? '',
+      description: json['description'] ?? '',
+      productImages: List<String>.from(json['productImages'] ?? []),
       sizes: (json['sizes'] as List? ?? [])
           .map((e) => ProductSizeDTO.fromJson(e))
           .toList(),
+      reviews: (json['reviews'] as List? ?? [])
+          .map((e) => ReviewDTO.fromJson(e))
+          .toList(),
+      categoryId: json['categoryId'],
+      categoryImage: json['categoryImage'],
+      categoryStatus: json['categoryStatus'],
     );
   }
 }
+
+
+
+
+class UserDTO {
+  final int id;
+  final String fullName;
+
+  UserDTO({
+    required this.id,
+    required this.fullName,
+  });
+
+  factory UserDTO.fromJson(Map<String, dynamic> json) {
+    return UserDTO(
+      id: json['id'] ?? 0,
+      fullName: json['fullName'] ?? 'Người dùng',
+    );
+  }
+}
+
+
+
+
 
 class PageResponse<T> {
   final List<T> content;

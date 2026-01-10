@@ -8,7 +8,11 @@ class ProductCard extends StatelessWidget {
   final AppTheme theme;
   final ProductForAdmin product;
 
-  const ProductCard({super.key, required this.theme, required this.product});
+  const ProductCard({
+    super.key,
+    required this.theme,
+    required this.product,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,25 +36,19 @@ class ProductCard extends StatelessWidget {
           product.productName,
           style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
         ),
-
-        /// 🔥 GIÁ + LOẠI (THAY MÔ TẢ)
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 6),
-          child: Row(
-            children: [
-              // _buildPriceRange(),
-              // const SizedBox(width: 8),
-              _buildCategory(),
-            ],
-          ),
+          child: _buildCategory(),
         ),
-
         trailing: const Icon(Icons.chevron_right),
+
+        /// ✅ CHỈ TRUYỀN ID
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => ProductDetailPage(product: product),
+              builder: (_) =>
+                  ProductDetailPage(productId: product.productId),
             ),
           );
         },
@@ -58,30 +56,7 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  // 💰 GIÁ MIN - MAX
-  // Widget _buildPriceRange() {
-  //   if (product.sizes.isEmpty) {
-  //     return _chip('Chưa có giá');
-  //   }
-
-  //   final prices = product.sizes.map((e) => e.price).toList();
-  //   prices.sort();
-
-  //   final min = prices.first;
-  //   final max = prices.last;
-
-  //   final text = min == max
-  //       ? AppUtils.formatVnd(min)
-  //       : '${AppUtils.formatVnd(min)} - ${AppUtils.formatVnd(max)}';
-
-  //   return _chip(
-  //     text,
-  //     textColor: theme.colors.textPrimary,
-  //     fontWeight: FontWeight.w600,
-  //   );
-  // }
-
-  // 🏷️ LOẠI / TRẠNG THÁI
+  // 🏷️ CATEGORY
   Widget _buildCategory() {
     return _chip(
       product.categoryStatus ?? 'Chưa phân loại',
@@ -89,8 +64,9 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  // 🎨 CHIP DÙNG CHUNG
-  Widget _chip(String text, {Color? textColor, FontWeight? fontWeight}) {
+  // 🎨 CHIP
+  Widget _chip(String text,
+      {Color? textColor, FontWeight? fontWeight}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -107,7 +83,7 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  // 🖼️ ẢNH
+  // 🖼️ IMAGE
   Widget _buildImage() {
     if (product.productImages.isEmpty) {
       return Container(
@@ -117,7 +93,10 @@ class ProductCard extends StatelessWidget {
           color: theme.colors.surface,
           borderRadius: BorderRadius.circular(AppUtils.radius),
         ),
-        child: Icon(Icons.fastfood, color: theme.colors.textDisabled),
+        child: Icon(
+          Icons.fastfood,
+          color: theme.colors.textDisabled,
+        ),
       );
     }
 

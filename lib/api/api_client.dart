@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shop_food_app/api/api_response.dart';
 
 class ApiClient {
   static const String baseUrl = 'http://localhost:8080/api';
@@ -7,31 +8,32 @@ class ApiClient {
   // =========================
   // GET
   // =========================
-  static Future<http.Response> get(
+  static Future<ApiResponse<T>> get<T>(
     String path, {
-    Map<String, String>? headers,
     Map<String, dynamic>? query,
+    Map<String, String>? headers,
+    T Function(dynamic json)? parser,
   }) async {
     final uri = Uri.parse('$baseUrl$path').replace(
-      queryParameters: query?.map(
-        (k, v) => MapEntry(k, v.toString()),
-      ),
+      queryParameters: query?.map((k, v) => MapEntry(k, v.toString())),
     );
 
-    return http.get(uri, headers: headers);
+    final res = await http.get(uri, headers: headers);
+    return _handleResponse(res, parser);
   }
 
   // =========================
-  // POST (JSON)
+  // POST
   // =========================
-  static Future<http.Response> post(
+  static Future<ApiResponse<T>> post<T>(
     String path, {
-    Map<String, String>? headers,
     dynamic body,
+    Map<String, String>? headers,
+    T Function(dynamic json)? parser,
   }) async {
     final uri = Uri.parse('$baseUrl$path');
 
-    return http.post(
+    final res = await http.post(
       uri,
       headers: {
         'Content-Type': 'application/json',
@@ -39,19 +41,22 @@ class ApiClient {
       },
       body: body != null ? jsonEncode(body) : null,
     );
+
+    return _handleResponse(res, parser);
   }
 
   // =========================
-  // PUT (JSON)
+  // PUT
   // =========================
-  static Future<http.Response> put(
+  static Future<ApiResponse<T>> put<T>(
     String path, {
-    Map<String, String>? headers,
     dynamic body,
+    Map<String, String>? headers,
+    T Function(dynamic json)? parser,
   }) async {
     final uri = Uri.parse('$baseUrl$path');
 
-    return http.put(
+    final res = await http.put(
       uri,
       headers: {
         'Content-Type': 'application/json',
@@ -59,19 +64,22 @@ class ApiClient {
       },
       body: body != null ? jsonEncode(body) : null,
     );
+
+    return _handleResponse(res, parser);
   }
 
   // =========================
-  // PATCH (JSON)
+  // PATCH
   // =========================
-  static Future<http.Response> patch(
+  static Future<ApiResponse<T>> patch<T>(
     String path, {
-    Map<String, String>? headers,
     dynamic body,
+    Map<String, String>? headers,
+    T Function(dynamic json)? parser,
   }) async {
     final uri = Uri.parse('$baseUrl$path');
 
-    return http.patch(
+    final res = await http.patch(
       uri,
       headers: {
         'Content-Type': 'application/json',
@@ -79,39 +87,38 @@ class ApiClient {
       },
       body: body != null ? jsonEncode(body) : null,
     );
+
+    return _handleResponse(res, parser);
   }
 
   // =========================
   // DELETE
   // =========================
-  static Future<http.Response> delete(
+  static Future<ApiResponse<T>> delete<T>(
     String path, {
     Map<String, String>? headers,
+    T Function(dynamic json)? parser,
   }) async {
     final uri = Uri.parse('$baseUrl$path');
-    return http.delete(uri, headers: headers);
+
+    final res = await http.delete(uri, headers: headers);
+    return _handleResponse(res, parser);
   }
 
   // =========================
-  // MULTIPART (UPLOAD)
+  // HANDLE RESPONSE (DÙNG CHUNG)
   // =========================
-  static Future<http.StreamedResponse> multipart(
-    String path,
-    String method,
-    Map<String, String> fields,
-    List<http.MultipartFile> files, {
-    Map<String, String>? headers,
-  }) async {
-    final uri = Uri.parse('$baseUrl$path');
+  static ApiResponse<T> _handleResponse<T>(
+    http.Response res,
+    T Function(dynamic json)? parser,
+  ) {
+    final raw = res.body.isNotEmpty ? jsonDecode(res.body) : null;
 
-    final request = http.MultipartRequest(method, uri)
-      ..fields.addAll(fields)
-      ..files.addAll(files);
-
-    if (headers != null) {
-      request.headers.addAll(headers);
-    }
-
-    return request.send();
+    return ApiResponse<T>(
+      statusCode: res.statusCode,
+      raw: raw,
+      data: parser != null && raw != null ? parser(raw) : null,
+      message: raw is Map ? raw['message'] : null,
+    );
   }
 }
