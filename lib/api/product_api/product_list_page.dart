@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:shop_food_app/api/product_api/product_api.dart';
 import 'package:shop_food_app/api/product_api/product_card.dart';
 import 'package:shop_food_app/api/product_api/product_models.dart';
+import 'package:shop_food_app/api/product_api/size_select_view.dart';
+import 'package:shop_food_app/api/product_size_api/product_size_api.dart';
+import 'package:shop_food_app/api/product_size_api/product_size_models.dart';
 import 'package:shop_food_app/component/empty_result_view.dart';
 import 'package:shop_food_app/component/swiper_banner.dart';
 import 'package:shop_food_app/component/category_swiper.dart';
@@ -18,6 +21,7 @@ class ProductListPage extends StatefulWidget {
 
 class _ProductListPageState extends State<ProductListPage> {
   late Future<PageResponse<ProductForAdmin>> future;
+  late Future<List<ProductSize>> future1;
   final TextEditingController searchController = TextEditingController();
   List<ProductForAdmin> allProducts = [];
   List<ProductForAdmin> filteredProducts = [];
@@ -33,6 +37,8 @@ class _ProductListPageState extends State<ProductListPage> {
   void initState() {
     super.initState();
     future = ProductApi.getAllProducts();
+    // future1 = ProductSizeApi.getSizesByProduct(product.productId);
+
   }
 
   @override
@@ -81,7 +87,7 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
 
-    return Scaffold(  
+    return Scaffold(
       backgroundColor: theme.colors.bgPrimary,
       appBar: AppBar(
         backgroundColor: theme.colors.bgSecondary,
@@ -98,8 +104,7 @@ class _ProductListPageState extends State<ProductListPage> {
         actions: [
           IconButton(
             icon: Icon(Icons.shopping_cart, color: theme.colors.textPrimary),
-            onPressed: () {
-            },
+            onPressed: () {},
           ),
           IconButton(
             icon: Icon(Icons.more_vert, color: theme.colors.textPrimary),
@@ -166,7 +171,17 @@ class _ProductListPageState extends State<ProductListPage> {
                       .map(
                         (p) => Padding(
                           padding: const EdgeInsets.only(bottom: 12),
-                          child: ProductCard(theme: theme, product: p),
+                          child: ProductCard(
+                            theme: theme,
+                            product: p,
+                            onAddToCart: (productId) {
+                              // cartController.add(productId); 
+                              print("Id $productId");
+
+                            _showSelectSizeSheet(context, productId);
+
+                            },
+                          ),
                         ),
                       )
                       .toList(),
@@ -175,4 +190,44 @@ class _ProductListPageState extends State<ProductListPage> {
       ],
     );
   }
+
+void _showSelectSizeSheet(BuildContext context, int productId) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: false,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+    builder: (_) {
+      return FutureBuilder<List<ProductSize>>(
+        future: ProductSizeApi.getSizesByProduct(productId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Padding(
+              padding: EdgeInsets.all(24),
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text('Lỗi: ${snapshot.error}'),
+            );
+          }
+
+          final sizes = snapshot.data!;
+
+          return SizeSelectView(sizes: sizes);
+        },
+      );
+    },
+  );
 }
+
+
+
+  
+}
+
+

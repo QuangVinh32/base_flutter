@@ -86,11 +86,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   _buildHeader(product, theme),
                   const SizedBox(height: 20),
                   // ================= SIZE OPTIONS =================
-                  _buildSizeOptions(product, theme),
-                  const SizedBox(height: 20),
+                  // _buildSizeOptions(product, theme),
+                  // const SizedBox(height: 20),
                   // ================= PRICE =================
-                  _buildPrice(theme),
-                  const SizedBox(height: 20),
+                 // _buildPrice(theme),
+                  // const SizedBox(height: 20), 
                   // ================= DESCRIPTION =================
                   _buildDescription(product, theme),
                   const SizedBox(height: 24),
