@@ -47,11 +47,9 @@ class _SettingLayoutAppState extends State<SettingLayoutApp> {
   Widget _buildPage() {
     switch (_index) {
       case 0:
-        return const Center(child: Text('Trang chủ'));
-      case 1:
         return const ProductListPage();
-      case 2:
-        return const Center(child: Text('Quét QR'));
+      case 1:
+        return const Center(child: Text('Don hang'));
       case 3:
         return const Center(child: Text('Thông báo'));
       case 4:

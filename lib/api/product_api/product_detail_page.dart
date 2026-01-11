@@ -45,8 +45,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
 
-    if (_loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    if (_product == null) return const Scaffold(body: Center(child: Text('Không tìm thấy sản phẩm')));
+    if (_loading)
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (_product == null)
+      return const Scaffold(
+        body: Center(child: Text('Không tìm thấy sản phẩm')),
+      );
 
     final product = _product!;
 
@@ -56,7 +60,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         backgroundColor: theme.colors.bgSecondary,
         foregroundColor: theme.colors.textPrimary,
         elevation: 0,
-        title: Text(product.productName),
+        // title: Text(product.productName),
+        title:const Text("Chi tiết sản phẩm"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -66,7 +71,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             // ================= CAROUSEL =================
             SwiperBanner(
               images: product.productImages,
-              height: 240,
+              height: 170,
               paddingHorizontal: 16,
               borderRadius: BorderRadius.circular(AppUtils.radius),
               autoPlayInterval: const Duration(seconds: 8),
@@ -105,7 +110,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(product.productName, style: theme.text.h1.copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          product.productName,
+          style: theme.text.h1.copyWith(fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 6),
         _chip(product.categoryStatus ?? 'Chưa phân loại', theme),
       ],
@@ -119,18 +127,25 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         color: theme.colors.textDisabled,
         borderRadius: BorderRadius.circular(AppUtils.radius),
       ),
-      child: Text(text, style: theme.text.caption.copyWith(color: theme.colors.textSecondary)),
+      child: Text(
+        text,
+        style: theme.text.caption.copyWith(color: theme.colors.textSecondary),
+      ),
     );
   }
 
   // ================= SIZE OPTIONS =================
   Widget _buildSizeOptions(ProductForUser product, AppTheme theme) {
-    if (product.sizes.isEmpty) return Text('Chưa có size', style: theme.text.caption);
+    if (product.sizes.isEmpty)
+      return Text('Chưa có size', style: theme.text.caption);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Chọn size', style: theme.text.body.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          'Chọn size',
+          style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
         Wrap(
           spacing: 12,
@@ -140,7 +155,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               onTap: () => setState(() => _selectedSize = s),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: selected ? theme.colors.accent : theme.colors.surface,
                   borderRadius: BorderRadius.circular(AppUtils.radius),
@@ -148,7 +163,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     color: selected ? theme.colors.accent : theme.colors.border,
                   ),
                   boxShadow: selected
-                      ? [const BoxShadow(color: Colors.black12, blurRadius: AppUtils.radius, offset: Offset(0, 2))]
+                      ? [
+                          const BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: AppUtils.radius,
+                            offset: Offset(0, 2),
+                          ),
+                        ]
                       : null,
                 ),
                 child: Text(
@@ -170,20 +191,29 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _buildPrice(AppTheme theme) {
     if (_selectedSize == null) return const SizedBox();
     final s = _selectedSize!;
-    final double finalPrice = s.discount > 0 ? s.price * (100 - s.discount) / 100 : s.price;
+    final double finalPrice = s.discount > 0
+        ? s.price * (100 - s.discount) / 100
+        : s.price;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(AppUtils.formatVnd(finalPrice),
-            style: theme.text.h1.copyWith(fontWeight: FontWeight.bold, color: theme.colors.accent)),
+        Text(
+          AppUtils.formatVnd(finalPrice),
+          style: theme.text.h1.copyWith(
+            fontWeight: FontWeight.bold,
+            color: theme.colors.accent,
+          ),
+        ),
         const SizedBox(width: 12),
         if (s.discount > 0)
-          Text(AppUtils.formatVnd(s.price),
-              style: theme.text.caption.copyWith(
-                decoration: TextDecoration.lineThrough,
-                color: theme.colors.textSecondary,
-              )),
+          Text(
+            AppUtils.formatVnd(s.price),
+            style: theme.text.caption.copyWith(
+              decoration: TextDecoration.lineThrough,
+              color: theme.colors.textSecondary,
+            ),
+          ),
       ],
     );
   }
@@ -193,24 +223,34 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Mô tả', style: theme.text.body.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          'Mô tả',
+          style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
-        Text(product.description, style: theme.text.body.copyWith(color: theme.colors.textSecondary)),
+        Text(
+          product.description,
+          style: theme.text.body.copyWith(color: theme.colors.textSecondary),
+        ),
       ],
     );
   }
 
   // ================= REVIEWS =================
   Widget _buildReviews(ProductForUser product, AppTheme theme) {
-    if (product.reviews.isEmpty) return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Text('Chưa có đánh giá', style: theme.text.caption),
-    );
+    if (product.reviews.isEmpty)
+      return Padding(
+        padding: const EdgeInsets.only(top: 16),
+        child: Text('Chưa có đánh giá', style: theme.text.caption),
+      );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Đánh giá', style: theme.text.body.copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          'Đánh giá',
+          style: theme.text.body.copyWith(fontWeight: FontWeight.bold),
+        ),
         const SizedBox(height: 12),
         ...product.reviews.map((r) {
           return Container(
@@ -219,23 +259,39 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             decoration: BoxDecoration(
               color: theme.colors.surface,
               borderRadius: BorderRadius.circular(AppUtils.radius),
-              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0,2))],
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(r.user?.fullName ?? 'Người dùng',
-                    style: theme.text.body.copyWith(fontWeight: FontWeight.w600)),
+                Text(
+                  r.user?.fullName ?? 'Người dùng',
+                  style: theme.text.body.copyWith(fontWeight: FontWeight.w600),
+                ),
                 const SizedBox(height: 4),
                 Row(
-                  children: List.generate(5, (i) => Icon(
-                    i < r.rating ? Icons.star : Icons.star_border,
-                    size: 16,
-                    color: Colors.amber,
-                  )),
+                  children: List.generate(
+                    5,
+                    (i) => Icon(
+                      i < r.rating ? Icons.star : Icons.star_border,
+                      size: 16,
+                      color: Colors.amber,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 6),
-                Text(r.reviewText, style: theme.text.body.copyWith(color: theme.colors.textSecondary)),
+                Text(
+                  r.reviewText,
+                  style: theme.text.body.copyWith(
+                    color: theme.colors.textSecondary,
+                  ),
+                ),
               ],
             ),
           );

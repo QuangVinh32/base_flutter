@@ -16,8 +16,11 @@ class ProductApi {
     final res = await ApiClient.get<PageResponse<ProductForAdmin>>(
       '/products/get-all',
       query: {'page': page, 'size': size, ...?filter},
-      parser: (json) =>
-          PageResponse.fromJson(json, (e) => ProductForAdmin.fromJson(e)),
+      parser: (json) {
+        debugPrint("Log GetAll ${json.toString()}");
+
+        return PageResponse.fromJson(json, (e) => ProductForAdmin.fromJson(e));
+      },
     );
 
     if (!res.isSuccess || res.data == null) {

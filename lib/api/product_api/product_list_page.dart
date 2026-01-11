@@ -6,6 +6,7 @@ import 'package:shop_food_app/component/empty_result_view.dart';
 import 'package:shop_food_app/component/swiper_banner.dart';
 import 'package:shop_food_app/component/category_swiper.dart';
 import 'package:shop_food_app/component/custom_text_field.dart';
+import 'package:shop_food_app/library/app_utils.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
 class ProductListPage extends StatefulWidget {
@@ -23,6 +24,7 @@ class _ProductListPageState extends State<ProductListPage> {
   List<String> categories = [];
   String? electedCategory;
   bool initialized = false;
+  bool _isSearching = false;
 
   // =========================
   // INIT
@@ -45,7 +47,6 @@ class _ProductListPageState extends State<ProductListPage> {
   void _initData(List<ProductForAdmin> products) {
     allProducts = products;
     filteredProducts = products;
-
     categories = products
         .map((e) => e.categoryStatus)
         .whereType<String>()
@@ -64,8 +65,8 @@ class _ProductListPageState extends State<ProductListPage> {
       electedCategory = category;
       filteredProducts = allProducts.where((p) {
         final name = p.productName.toLowerCase();
-        final desc = (p.description).toLowerCase();
-        final matchSearch = q.isEmpty || name.contains(q) || desc.contains(q);
+        final matchSearch = q.isEmpty || name.contains(q);
+
         final matchCategory =
             electedCategory == null || p.categoryStatus == electedCategory;
         return matchSearch && matchCategory;
@@ -80,16 +81,31 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget build(BuildContext context) {
     final theme = AppTheme.of(context);
 
-    return Scaffold(
+    return Scaffold(  
       backgroundColor: theme.colors.bgPrimary,
       appBar: AppBar(
-        elevation: 0,
         backgroundColor: theme.colors.bgSecondary,
-        foregroundColor: theme.colors.textPrimary,
-        title: const Text(
-          'Danh sách sản phẩm',
-          style: TextStyle(fontWeight: FontWeight.w600),
+        elevation: 0,
+        title: CustomTextField(
+          theme: theme,
+          controller: searchController,
+          fontSize: 14,
+          hintText: 'Tìm kiếm sản phẩm',
+          prefixIcon: Icons.search,
+          suffixIcon: Icons.close,
+          onChanged: (v) => _applyFilter(keyword: v),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.shopping_cart, color: theme.colors.textPrimary),
+            onPressed: () {
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.more_vert, color: theme.colors.textPrimary),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: FutureBuilder<PageResponse<ProductForAdmin>>(
         future: future,
@@ -114,21 +130,21 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget _buildBody(AppTheme theme) {
     return ListView(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-          child: CustomTextField(
-            theme: theme,
-            controller: searchController,
-            hintText: 'Tìm kiếm sản phẩm',
-            prefixIcon: Icons.search,
-            suffixIcon: Icons.close,
-            onChanged: (v) => _applyFilter(keyword: v),
-          ),
-        ),
-
+        // Padding(
+        //   padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+        //   child: CustomTextField(
+        //     theme: theme,
+        //     controller: searchController,
+        //     hintText: 'Tìm kiếm sản phẩm',
+        //     prefixIcon: Icons.search,
+        //     suffixIcon: Icons.close,
+        //     onChanged: (v) => _applyFilter(keyword: v),
+        //   ),
+        // ),
         const SwiperBanner(
+          paddingVertical: 16,
           images: [
-            // 'assets/images/hue.jpg',
+            'assets/images/hue.jpg',
             'assets/images/hue12.jpg',
             'assets/images/hue123.jpg',
           ],
@@ -157,18 +173,6 @@ class _ProductListPageState extends State<ProductListPage> {
                 ),
         ),
       ],
-    );
-  }
-
-  Widget _buildEmpty(AppTheme theme) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 40),
-      child: Center(
-        child: Text(
-          'Không có sản phẩm',
-          style: theme.text.caption.copyWith(color: theme.colors.textSecondary),
-        ),
-      ),
     );
   }
 }

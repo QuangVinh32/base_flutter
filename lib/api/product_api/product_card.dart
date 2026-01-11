@@ -23,7 +23,7 @@ class ProductCard extends StatelessWidget {
         border: Border.all(color: theme.colors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -42,7 +42,6 @@ class ProductCard extends StatelessWidget {
         ),
         trailing: const Icon(Icons.chevron_right),
 
-        /// ✅ CHỈ TRUYỀN ID
         onTap: () {
           Navigator.push(
             context,
@@ -56,7 +55,6 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  // 🏷️ CATEGORY
   Widget _buildCategory() {
     return _chip(
       product.categoryStatus ?? 'Chưa phân loại',
@@ -64,7 +62,6 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  // 🎨 CHIP
   Widget _chip(String text,
       {Color? textColor, FontWeight? fontWeight}) {
     return Container(
@@ -83,7 +80,6 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  // 🖼️ IMAGE
   Widget _buildImage() {
     if (product.productImages.isEmpty) {
       return Container(

@@ -53,30 +53,30 @@ class ReviewDTO {
 class ProductForAdmin {
   final int productId;
   final String productName;
-  final String description;
+  // final String description;
   final String? categoryStatus;
   final List<String> productImages;
-  final List<ProductSizeDTO> sizes;
+  // final List<ProductSizeDTO> sizes;
 
   ProductForAdmin({
     required this.productId,
     required this.productName,
-    required this.description,
+    // required this.description,
     this.categoryStatus,
     required this.productImages,
-    required this.sizes,
+    // required this.sizes,
   });
 
   factory ProductForAdmin.fromJson(Map<String, dynamic> json) {
     return ProductForAdmin(
       productId: json['productId'],
       productName: json['productName'],
-      description: json['description'],
+      // description: json['description'],
       categoryStatus: json['categoryStatus'],
       productImages: List<String>.from(json['productImages'] ?? []),
-      sizes: (json['sizes'] as List? ?? [])
-          .map((e) => ProductSizeDTO.fromJson(e))
-          .toList(),
+      // sizes: (json['sizes'] as List? ?? [])
+      //     .map((e) => ProductSizeDTO.fromJson(e))
+      //     .toList(),
     );
   }
 }
