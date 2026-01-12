@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shop_food_app/api/category_api/category_api.dart';
+import 'package:shop_food_app/api/category_api/category_models.dart';
 import 'package:shop_food_app/api/product_api/product_api.dart';
 import 'package:shop_food_app/api/product_api/product_card.dart';
 import 'package:shop_food_app/api/product_api/product_models.dart';
@@ -30,6 +32,9 @@ class _ProductListPageState extends State<ProductListPage> {
   bool initialized = false;
   bool _isSearching = false;
 
+  late Future<PageResponse<CategoryDTO>> futureCategories;
+  List<CategoryDTO> categoryList = [];
+
   // =========================
   // INIT
   // =========================
@@ -37,7 +42,10 @@ class _ProductListPageState extends State<ProductListPage> {
   void initState() {
     super.initState();
     future = ProductApi.getAllProducts();
-    // future1 = ProductSizeApi.getSizesByProduct(product.productId);
+    futureCategories = CategoryApi.getAllCategories(
+      page: 0,
+      size: 100,
+    ); // load tất cả category
   }
 
   @override
@@ -154,11 +162,32 @@ class _ProductListPageState extends State<ProductListPage> {
           ],
         ),
         const SizedBox(height: 6),
-        if (categories.isNotEmpty)
-          CategorySwiper(
-            categories: categories,
-            onSelected: (c) => _applyFilter(category: c == 'Tất cả' ? null : c),
-          ),
+        FutureBuilder<PageResponse<CategoryDTO>>(
+          future: futureCategories,
+          builder: (context, snapshotCat) {
+            if (snapshotCat.connectionState == ConnectionState.waiting) {
+              return const SizedBox(
+                height: 70,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            if (snapshotCat.hasError) {
+              return SizedBox(
+                height: 70,
+                child: Center(
+                  child: Text('Lỗi load categories: ${snapshotCat.error}'),
+                ),
+              );
+            }
+
+            final categoryList = snapshotCat.data!.content;
+            return CategorySwiper  (
+              categories: categoryList,
+              onSelected: (c) =>
+                  _applyFilter(category: c == 'Tất cả' ? null : c),
+            );
+          },
+        ),
 
         const SizedBox(height: 12),
         Padding(
@@ -209,7 +238,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
             if (snapshot.hasError) {
               return SizedBox(
-              height: 200,
+                height: 200,
                 child: Text('Lỗi: ${snapshot.error}'),
               );
             }

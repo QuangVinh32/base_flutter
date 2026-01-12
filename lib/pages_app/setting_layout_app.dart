@@ -13,27 +13,9 @@ class SettingLayoutApp extends StatefulWidget {
 
 class _SettingLayoutAppState extends State<SettingLayoutApp> {
   int _index = 0;
-
-  final List<String> _titles = const [
-    'Trang chủ',
-    'Dịch vụ',
-    'Quét QR',
-    'Thông báo',
-    'Cá nhân',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: VNeIDAppBar(
-      //   title: _titles[_index],
-      //   onQr: () {
-      //     setState(() => _index = 2);
-      //   },
-      //   onNotification: () {
-      //     setState(() => _index = 3);
-      //   },
-      // ),
       body: _buildPage(),
       bottomNavigationBar: VNeIDBottomBar(
         currentIndex: _index,
