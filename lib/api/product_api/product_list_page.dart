@@ -38,7 +38,6 @@ class _ProductListPageState extends State<ProductListPage> {
     super.initState();
     future = ProductApi.getAllProducts();
     // future1 = ProductSizeApi.getSizesByProduct(product.productId);
-
   }
 
   @override
@@ -175,11 +174,10 @@ class _ProductListPageState extends State<ProductListPage> {
                             theme: theme,
                             product: p,
                             onAddToCart: (productId) {
-                              // cartController.add(productId); 
+                              // cartController.add(productId);
                               print("Id $productId");
 
-                            _showSelectSizeSheet(context, productId);
-
+                              _showSelectSizeSheet(context, productId);
                             },
                           ),
                         ),
@@ -191,43 +189,37 @@ class _ProductListPageState extends State<ProductListPage> {
     );
   }
 
-void _showSelectSizeSheet(BuildContext context, int productId) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: false,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    ),
-    builder: (_) {
-      return FutureBuilder<List<ProductSize>>(
-        future: ProductSizeApi.getSizesByProduct(productId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Padding(
-              padding: EdgeInsets.all(24),
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
+  void _showSelectSizeSheet(BuildContext context, int productId) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) {
+        return FutureBuilder<List<ProductSize>>(
+          future: ProductSizeApi.getSizesByProduct(productId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const SizedBox(
+                height: 200,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
 
-          if (snapshot.hasError) {
-            return Padding(
-              padding: const EdgeInsets.all(24),
-              child: Text('Lỗi: ${snapshot.error}'),
-            );
-          }
+            if (snapshot.hasError) {
+              return SizedBox(
+              height: 200,
+                child: Text('Lỗi: ${snapshot.error}'),
+              );
+            }
 
-          final sizes = snapshot.data!;
+            final sizes = snapshot.data!;
 
-          return SizeSelectView(sizes: sizes);
-        },
-      );
-    },
-  );
+            return SizeSelectView(sizes: sizes);
+          },
+        );
+      },
+    );
+  }
 }
-
-
-
-  
-}
-
-

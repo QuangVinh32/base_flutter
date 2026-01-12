@@ -81,12 +81,12 @@ class ProductCard extends StatelessWidget {
       onTap: () {
         onAddToCart?.call(product.productId);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Đã thêm vào giỏ hàng'),
-            duration: Duration(milliseconds: 800),
-          ),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     content: Text('Đã thêm vào giỏ hàng'),
+        //     duration: Duration(milliseconds: 800),
+        //   ),
+        // );
       },
 
       child: Container(
