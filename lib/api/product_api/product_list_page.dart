@@ -142,25 +142,14 @@ class _ProductListPageState extends State<ProductListPage> {
   Widget _buildBody(AppTheme theme) {
     return ListView(
       children: [
-        // Padding(
-        //   padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-        //   child: CustomTextField(
-        //     theme: theme,
-        //     controller: searchController,
-        //     hintText: 'Tìm kiếm sản phẩm',
-        //     prefixIcon: Icons.search,
-        //     suffixIcon: Icons.close,
-        //     onChanged: (v) => _applyFilter(keyword: v),
-        //   ),
+        // const SwiperBanner(
+        //   paddingVertical: 16,
+        //   images: [
+        //     'assets/images/hue.jpg',
+        //     'assets/images/hue12.jpg',
+        //     'assets/images/hue123.jpg',
+        //   ],
         // ),
-        const SwiperBanner(
-          paddingVertical: 16,
-          images: [
-            'assets/images/hue.jpg',
-            'assets/images/hue12.jpg',
-            'assets/images/hue123.jpg',
-          ],
-        ),
         const SizedBox(height: 6),
         FutureBuilder<PageResponse<CategoryDTO>>(
           future: futureCategories,
@@ -181,7 +170,7 @@ class _ProductListPageState extends State<ProductListPage> {
             }
 
             final categoryList = snapshotCat.data!.content;
-            return CategorySwiper  (
+            return CategorySwiper(
               categories: categoryList,
               onSelected: (c) =>
                   _applyFilter(category: c == 'Tất cả' ? null : c),
@@ -245,7 +234,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
             final sizes = snapshot.data!;
 
-            return SizeSelectView(sizes: sizes);
+            return SizeSelectView(productId: productId, sizes: sizes);
           },
         );
       },

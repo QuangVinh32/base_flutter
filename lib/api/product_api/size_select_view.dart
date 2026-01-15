@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:shop_food_app/api/cart_api/cart_api.dart';
 import 'package:shop_food_app/api/product_size_api/product_size_models.dart';
 import 'package:shop_food_app/library/app_utils.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
 
 class SizeSelectView extends StatefulWidget {
+  final int productId;
   final List<ProductSize> sizes;
 
-  const SizeSelectView({super.key, required this.sizes});
+  const SizeSelectView({
+    super.key,
+    required this.productId,
+    required this.sizes,
+  });
 
   @override
   State<SizeSelectView> createState() => _SizeSelectViewState();
@@ -14,23 +20,31 @@ class SizeSelectView extends StatefulWidget {
 
 class _SizeSelectViewState extends State<SizeSelectView> {
   late ProductSize selectedSize;
-  int quantity = 1;
+  final Map<int, int> quantities = {}; // quantity theo từng size
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
     selectedSize = widget.sizes.first;
+
+    // init quantity = 1 cho mỗi size
+    for (final s in widget.sizes) {
+      quantities[s.productSizeId] = 1;
+    }
   }
+
+  int get quantity => quantities[selectedSize.productSizeId]!;
 
   @override
   Widget build(BuildContext context) {
+    final theme = AppTheme.of(context);
+
     final price = selectedSize.price;
     final discount = selectedSize.discount ?? 0;
     final stock = selectedSize.quantity;
     final discountedPrice = price - (price * discount / 100);
     final totalPrice = discountedPrice * quantity;
-
-    final theme = AppTheme.of(context);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
@@ -38,31 +52,25 @@ class _SizeSelectViewState extends State<SizeSelectView> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// TITLE
           const Text(
             'Chọn size',
             style: TextStyle(fontWeight: FontWeight.w600),
           ),
-
           const SizedBox(height: 8),
 
-          /// SIZE BUTTONS (CHỈ HIỆN SIZE)
+          /// SIZE SELECT
           Wrap(
             spacing: 8,
             children: widget.sizes.map((s) {
               final isSelected = s.productSizeId == selectedSize.productSizeId;
               return ChoiceChip(
+                label: Text(s.sizeName),
+                selected: isSelected,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppUtils.radius),
                 ),
-
-                label: Text(s.sizeName),
-                selected: isSelected,
                 onSelected: (_) {
-                  setState(() {
-                    selectedSize = s;
-                    quantity = 1;
-                  });
+                  setState(() => selectedSize = s);
                 },
               );
             }).toList(),
@@ -91,8 +99,6 @@ class _SizeSelectViewState extends State<SizeSelectView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Giá'),
-
-                  /// Giá gốc (nếu có discount)
                   if (discount > 0)
                     Text(
                       '${price.toStringAsFixed(0)} đ',
@@ -102,8 +108,6 @@ class _SizeSelectViewState extends State<SizeSelectView> {
                         color: Colors.grey,
                       ),
                     ),
-
-                  /// Giá sau giảm
                   Row(
                     children: [
                       Text(
@@ -114,7 +118,6 @@ class _SizeSelectViewState extends State<SizeSelectView> {
                           color: Colors.red,
                         ),
                       ),
-
                       if (discount > 0) ...[
                         const SizedBox(width: 6),
                         Container(
@@ -140,7 +143,6 @@ class _SizeSelectViewState extends State<SizeSelectView> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
 
               /// QUANTITY
               Row(
@@ -148,7 +150,10 @@ class _SizeSelectViewState extends State<SizeSelectView> {
                   _qtyButton(
                     icon: Icons.remove,
                     onTap: quantity > 1
-                        ? () => setState(() => quantity--)
+                        ? () => setState(
+                            () => quantities[selectedSize.productSizeId] =
+                                quantity - 1,
+                          )
                         : null,
                   ),
                   Padding(
@@ -161,13 +166,20 @@ class _SizeSelectViewState extends State<SizeSelectView> {
                   _qtyButton(
                     icon: Icons.add,
                     onTap: quantity < stock
-                        ? () => setState(() => quantity++)
+                        ? () => setState(
+                            () => quantities[selectedSize.productSizeId] =
+                                quantity + 1,
+                          )
                         : null,
                   ),
                 ],
               ),
             ],
           ),
+
+          const SizedBox(height: 6),
+
+          /// TOTAL
           Text(
             'Tổng: ${totalPrice.toStringAsFixed(0)} đ',
             style: TextStyle(
@@ -183,21 +195,39 @@ class _SizeSelectViewState extends State<SizeSelectView> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: stock == 0
-                  ? null
-                  : () {
-                      Navigator.pop(context);
-                      debugPrint(
-                        'ADD CART → size=${selectedSize.sizeName}, '
-                        'qty=$quantity, price=$price',
-                      );
-                    },
-              child: const Text('Thêm vào giỏ hàng'),
+              onPressed: stock == 0 || _loading ? null : _addToCart,
+              child: _loading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Thêm vào giỏ hàng'),
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _addToCart() async {
+    setState(() => _loading = true);
+    try {
+      await CartApi.addToCart(
+        productId: widget.productId,
+        productSizeId: selectedSize.productSizeId,
+        quantity: quantity,
+      );
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   Widget _qtyButton({required IconData icon, VoidCallback? onTap}) {

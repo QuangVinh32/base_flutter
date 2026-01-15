@@ -1,9 +1,27 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop_food_app/api/api_response.dart';
 
 class ApiClient {
   static const String baseUrl = 'http://localhost:8080/api';
+
+  // =========================
+  // HEADER CHUNG (CÓ TOKEN)
+  // =========================
+  static Future<Map<String, String>> _defaultHeaders({
+    Map<String, String>? extra,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    return {
+      'Content-Type': 'application/json',
+      if (token != null && token.isNotEmpty)
+        'Authorization': 'Bearer $token', // ✅ QUAN TRỌNG
+      ...?extra,
+    };
+  }
 
   // =========================
   // GET
@@ -14,11 +32,15 @@ class ApiClient {
     Map<String, String>? headers,
     T Function(dynamic json)? parser,
   }) async {
-    final uri = Uri.parse('$baseUrl$path').replace(
-      queryParameters: query?.map((k, v) => MapEntry(k, v.toString())),
+    final uri = Uri.parse(
+      '$baseUrl$path',
+    ).replace(queryParameters: query?.map((k, v) => MapEntry(k, v.toString())));
+
+    final res = await http.get(
+      uri,
+      headers: await _defaultHeaders(extra: headers),
     );
 
-    final res = await http.get(uri, headers: headers);
     return _handleResponse(res, parser);
   }
 
@@ -35,10 +57,7 @@ class ApiClient {
 
     final res = await http.post(
       uri,
-      headers: {
-        'Content-Type': 'application/json',
-        ...?headers,
-      },
+      headers: await _defaultHeaders(extra: headers),
       body: body != null ? jsonEncode(body) : null,
     );
 
@@ -58,10 +77,7 @@ class ApiClient {
 
     final res = await http.put(
       uri,
-      headers: {
-        'Content-Type': 'application/json',
-        ...?headers,
-      },
+      headers: await _defaultHeaders(extra: headers),
       body: body != null ? jsonEncode(body) : null,
     );
 
@@ -81,10 +97,7 @@ class ApiClient {
 
     final res = await http.patch(
       uri,
-      headers: {
-        'Content-Type': 'application/json',
-        ...?headers,
-      },
+      headers: await _defaultHeaders(extra: headers),
       body: body != null ? jsonEncode(body) : null,
     );
 
@@ -101,12 +114,16 @@ class ApiClient {
   }) async {
     final uri = Uri.parse('$baseUrl$path');
 
-    final res = await http.delete(uri, headers: headers);
+    final res = await http.delete(
+      uri,
+      headers: await _defaultHeaders(extra: headers),
+    );
+
     return _handleResponse(res, parser);
   }
 
   // =========================
-  // HANDLE RESPONSE (DÙNG CHUNG)
+  // HANDLE RESPONSE
   // =========================
   static ApiResponse<T> _handleResponse<T>(
     http.Response res,

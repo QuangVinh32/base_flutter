@@ -3,6 +3,7 @@ import 'package:shop_food_app/api/product_api/product_list_page.dart';
 import 'package:shop_food_app/auth/login_page.dart';
 import 'package:shop_food_app/pages_app/vneid_app_bar.dart';
 import 'package:shop_food_app/pages_app/vneid_bottom_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingLayoutApp extends StatefulWidget {
   const SettingLayoutApp({super.key});
@@ -40,4 +41,10 @@ class _SettingLayoutAppState extends State<SettingLayoutApp> {
         return const SizedBox();
     }
   }
+}
+
+Future<bool> isLoggedIn() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('access_token');
+  return token != null && token.isNotEmpty;
 }

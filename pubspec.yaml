@@ -61,10 +61,10 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  assets:
-  - assets/images/hue.jpg
-  - assets/images/hue12.jpg
-  - assets/images/hue123.jpg
+  # assets:
+  # # - assets/images/hue.jpg
+  # # - assets/images/hue12.jpg
+  # # - assets/images/hue123.jpg
   
 
   # To add assets to your application, add an assets section, like this:

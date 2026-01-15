@@ -10,9 +10,15 @@ class CartApi {
   static Future<void> addToCart({
     required int productId,
     required int productSizeId,
+    required int quantity,
   }) async {
     final res = await ApiClient.post<void>(
-      '/carts/add/$productId/$productSizeId',
+      '/carts/add',
+      body: {
+        'productId': productId,
+        'productSizeId': productSizeId,
+        'quantity': quantity,
+      },
     );
 
     if (!res.isSuccess) {
@@ -59,9 +65,7 @@ class CartApi {
   // DELETE /carts/clear
   // =========================
   static Future<void> clearCart() async {
-    final res = await ApiClient.delete<void>(
-      '/carts/clear',
-    );
+    final res = await ApiClient.delete<void>('/carts/clear');
 
     if (!res.isSuccess) {
       throw Exception(res.message ?? 'Clear cart failed');
@@ -80,9 +84,7 @@ class CartApi {
         debugPrint(json.toString());
         debugPrint('======================');
 
-        return (json as List)
-            .map((e) => CartItem.fromJson(e))
-            .toList();
+        return (json as List).map((e) => CartItem.fromJson(e)).toList();
       },
     );
 

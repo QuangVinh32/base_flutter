@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shop_food_app/api/product_api/product_list_page.dart';
 import 'package:shop_food_app/auth/auth_api.dart';
 import 'package:shop_food_app/component/custom_input_field.dart';
 import 'package:shop_food_app/component/show_snack_bar.dart';
 import 'package:shop_food_app/library/app_utils.dart';
 import 'package:shop_food_app/pages/user_info.dart';
+import 'package:shop_food_app/pages_app/setting_layout_app.dart';
 import 'package:shop_food_app/pages_app/user_profile_page.dart';
 import 'package:shop_food_app/theme/app_colors.dart';
 import 'package:shop_food_app/theme/app_theme.dart';
@@ -21,8 +23,6 @@ class _LoginPage1State extends State<LoginPage1> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _docNoController = TextEditingController();
-
-  
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -393,23 +393,27 @@ class _LoginPage1State extends State<LoginPage1> {
         password: _passwordController.text,
       );
 
-      // LƯU NẾU CÓ GHI NHỚ
+      // ✅ LUÔN LUÔN LƯU TOKEN
       final prefs = await SharedPreferences.getInstance();
+
+      // LUÔN LƯU TOKEN
+      await prefs.setString('token', data['token']);
 
       if (_rememberMe) {
         await prefs.setBool('remember_me', true);
         await prefs.setString('username', _phoneController.text.trim());
         await prefs.setString('password', _passwordController.text);
-        await prefs.setString('token', data['token']);
       } else {
-        await prefs.clear();
+        await prefs.remove('remember_me');
       }
 
       if (!mounted) return;
 
-      Navigator.push(
+      // ✅ QUAY VỀ HOME + XOÁ LOGIN KHỎI STACK
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => UserInfoPage (user: data,)),
+        MaterialPageRoute(builder: (_) => SettingLayoutApp()),
+        (route) => false,
       );
     } catch (e) {
       showErrorSnackBar(
